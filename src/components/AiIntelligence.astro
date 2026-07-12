@@ -1,16 +1,81 @@
 ---
 import Container from './ui/Container.astro';
-import Card from './ui/Card.astro';
 import SectionHeading from './ui/SectionHeading.astro';
 
-const questions = [
-  'Why did cost per loan increase this month?',
-  'Which branches are showing early signs of fallout risk?',
-  'Where are we seeing productivity gaps?',
-  'What is driving margin pressure?',
-  'Which teams need attention this week?',
-  'What changed across our pipeline?',
+const demos = [
+  {
+    id: 'cost',
+    question: 'Why did cost per loan increase this month?',
+    summary: 'Cost per loan rose 8% MoM, led by origination cycle time and rework.',
+    metrics: [
+      {
+        label: 'Cost / loan',
+        value: '$412',
+        delta: '+8%',
+        spark: {
+          type: 'area' as const,
+          values: [34, 30, 26, 28, 22, 24, 20, 32, 40, 36, 44, 52, 48, 58, 62],
+        },
+      },
+      {
+        label: 'Cycle time',
+        value: '4.2d',
+        delta: '+0.7d',
+        spark: {
+          type: 'area' as const,
+          values: [28, 30, 27, 32, 29, 35, 33, 38, 36, 42, 40, 46, 44, 50, 54],
+        },
+      },
+      {
+        label: 'Rework',
+        value: '18%',
+        delta: '+3pts',
+        spark: {
+          type: 'area' as const,
+          values: [22, 24, 20, 26, 30, 28, 34, 32, 38, 36, 42, 40, 46, 48, 52],
+        },
+      },
+    ],
+    bullets: [
+      'Branches 07 and 14 driving cycle-time delay',
+      'Condition rework up 22% month over month',
+      'West pull-through soft spots amplifying unit cost',
+    ],
+  },
+  {
+    id: 'fallout',
+    question: 'Which branches are showing early signs of fallout risk?',
+  },
+  {
+    id: 'focus',
+    question: 'Where should leadership focus today?',
+  },
 ];
+
+const initial = demos[0];
+const SPARK_W = 56;
+const SPARK_H = 28;
+
+function areaPaths(values: number[], width: number, height: number) {
+  const max = Math.max(...values);
+  const min = Math.min(...values);
+  const range = Math.max(max - min, 1);
+  const coords = values.map((value, index) => {
+    const x = (index / (values.length - 1)) * width;
+    const y = height - ((value - min) / range) * (height - 3) - 1.5;
+    return { x, y };
+  });
+  const line = coords
+    .map((point, index) => `${index === 0 ? 'M' : 'L'}${point.x.toFixed(1)} ${point.y.toFixed(1)}`)
+    .join(' ');
+  const area = `${line} L${width} ${height} L0 ${height} Z`;
+  return { line, area };
+}
+
+const initialMetrics = initial.metrics.map((metric, index) => {
+  const { line, area } = areaPaths(metric.spark.values, SPARK_W, SPARK_H);
+  return { ...metric, line, area, gradId: `cohi-ssr-area-${index}` };
+});
 ---
 
 <section
@@ -23,17 +88,157 @@ const questions = [
       description="Coheus helps leaders move beyond static reporting. With Cohi, leadership teams can ask direct business questions, investigate performance issues, and receive clear explanations based on connected lender data."
     />
 
-    <div class="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-      {
-        questions.map((question) => (
-          <Card class="h-full !p-5" data-reveal>
-            <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-accent">Ask Cohi</p>
-            <p class="mt-3 text-sm font-medium leading-snug text-ink sm:text-[15px]">
-              “{question}”
+    <div
+      class="cohi-demo mx-auto mt-12 max-w-3xl"
+      data-cohi-demo
+      data-active="cost"
+      data-evidence="shown"
+      data-reveal
+    >
+      <div class="rounded-2xl border border-line bg-surface p-4 shadow-elevated sm:p-6">
+        <div class="flex items-center gap-2.5 border-b border-line pb-4">
+          <span
+            class="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-soft text-accent"
+            aria-hidden="true"
+          >
+            <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="2.4" stroke="currentColor" stroke-width="1.5"></circle>
+              <path
+                d="M8 2 V3.4 M8 12.6 V14 M2 8 H3.4 M12.6 8 H14"
+                stroke="currentColor"
+                stroke-width="1.4"
+                stroke-linecap="round"></path>
+            </svg>
+          </span>
+          <div>
+            <p class="text-sm font-semibold text-ink">Ask Cohi</p>
+            <p class="text-[11px] text-ink-subtle">Executive Q&amp;A on connected lender signals</p>
+          </div>
+        </div>
+
+        <div class="mt-5 space-y-3">
+          <div class="rounded-xl border border-line bg-canvas px-4 py-3">
+            <p class="text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-subtle">You ask</p>
+            <p
+              class="mt-1.5 min-h-[1.35rem] text-sm font-medium leading-snug text-ink"
+              data-cohi-question
+            >
+              <span data-cohi-question-text>{initial.question}</span><span
+                class="cohi-caret"
+                data-cohi-caret
+                aria-hidden="true"></span>
             </p>
-          </Card>
-        ))
-      }
+          </div>
+
+          <div
+            class="rounded-xl border border-line bg-[linear-gradient(180deg,#f7fbfa_0%,#ffffff_55%)] px-4 py-4 shadow-card ring-1 ring-accent/5"
+            data-cohi-answer-panel
+          >
+            <div class="flex items-center gap-2">
+              <span
+                class="cohi-status-dot h-1.5 w-1.5 rounded-full bg-accent"
+                data-cohi-status-dot
+                aria-hidden="true"></span>
+              <p
+                class="text-[10px] font-semibold uppercase tracking-[0.12em] text-accent"
+                data-cohi-status-label
+              >
+                Cohi answers
+              </p>
+            </div>
+
+            <div class="relative mt-2.5 min-h-[10rem]" data-cohi-body-wrap>
+              <p
+                class="cohi-thinking absolute inset-0 text-sm leading-relaxed text-ink-subtle"
+                data-cohi-thinking
+                hidden
+                aria-hidden="true"
+              >
+                Analyzing lender signals…
+              </p>
+
+              <div data-cohi-body>
+                <p
+                  class="cohi-summary text-sm leading-relaxed text-ink sm:text-[15px]"
+                  data-cohi-answer
+                  aria-live="polite"
+                >
+                  {initial.summary}
+                </p>
+
+                <div
+                  class="cohi-metrics mt-3 grid grid-cols-3 gap-2"
+                  data-cohi-metrics
+                >
+                  {
+                    initialMetrics.map((metric) => (
+                      <div class="cohi-metric flex items-center gap-2 rounded-lg border border-line bg-surface px-2.5 py-2 shadow-card">
+                        <div class="min-w-0 flex-1">
+                          <p class="text-[10px] font-medium text-ink-subtle">{metric.label}</p>
+                          <p class="mt-0.5 text-sm font-semibold text-ink">{metric.value}</p>
+                          <p class="mt-0.5 text-[10px] font-medium text-warning">{metric.delta}</p>
+                        </div>
+                        <div class="cohi-kpi-spark-wrap shrink-0" aria-hidden="true">
+                          <svg
+                            class="cohi-kpi-spark"
+                            viewBox={`0 0 ${SPARK_W} ${SPARK_H}`}
+                            width={SPARK_W}
+                            height={SPARK_H}
+                          >
+                            <defs>
+                              <linearGradient id={metric.gradId} x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="#1a7a88" stop-opacity="0.35" />
+                                <stop offset="100%" stop-color="#1a7a88" stop-opacity="0" />
+                              </linearGradient>
+                            </defs>
+                            <path class="cohi-kpi-area" d={metric.area} fill={`url(#${metric.gradId})`}
+                            ></path>
+                            <path
+                              class="cohi-kpi-area-line"
+                              d={metric.line}
+                              fill="none"
+                              stroke="#0f5f6b"
+                              stroke-width="1.5"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"></path>
+                          </svg>
+                        </div>
+                      </div>
+                    ))
+                  }
+                </div>
+
+                <ul class="cohi-bullets mt-3 space-y-1.5" data-cohi-bullets>
+                  {
+                    initial.bullets.map((bullet) => (
+                      <li class="cohi-bullet flex gap-2 text-xs leading-snug text-ink-muted sm:text-[13px]">
+                        <span class="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-accent" aria-hidden="true"
+                        ></span>
+                        <span>{bullet}</span>
+                      </li>
+                    ))
+                  }
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-5 flex flex-wrap gap-2" role="tablist" aria-label="Sample Cohi questions">
+          {
+            demos.map((demo) => (
+              <button
+                type="button"
+                class="cohi-chip rounded-full border border-line bg-canvas px-3 py-1.5 text-left text-[11px] font-medium text-ink-muted transition-colors sm:text-xs"
+                data-cohi-chip={demo.id}
+                aria-pressed={demo.id === 'cost' ? 'true' : 'false'}
+              >
+                {demo.question}
+              </button>
+            ))
+          }
+        </div>
+      </div>
     </div>
 
     <p class="mt-10 text-center text-sm font-medium text-ink-muted" data-reveal>
@@ -41,3 +246,148 @@ const questions = [
     </p>
   </Container>
 </section>
+
+<style>
+  .cohi-chip[aria-pressed='true'] {
+    border-color: color-mix(in oklab, var(--color-accent) 35%, var(--color-line));
+    background: var(--color-accent-soft);
+    color: var(--color-accent);
+  }
+
+  .cohi-caret {
+    display: inline-block;
+    width: 1.5px;
+    height: 0.95em;
+    margin-left: 1px;
+    vertical-align: text-bottom;
+    background: var(--color-accent);
+    opacity: 0;
+  }
+
+  .cohi-demo[data-typing='true'] .cohi-caret {
+    opacity: 1;
+    animation: cohi-caret-blink 0.9s step-end infinite;
+  }
+
+  .cohi-demo[data-thinking='true'] .cohi-status-dot {
+    animation: cohi-dot-pulse 1s ease-in-out infinite;
+  }
+
+  .cohi-metric,
+  .cohi-bullet {
+    opacity: 0;
+    transform: translateY(10px);
+    transition:
+      opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .cohi-demo[data-evidence='metrics'] .cohi-metric,
+  .cohi-demo[data-evidence='bullets'] .cohi-metric,
+  .cohi-demo[data-evidence='shown'] .cohi-metric {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .cohi-demo[data-evidence='bullets'] .cohi-bullet,
+  .cohi-demo[data-evidence='shown'] .cohi-bullet {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  :global(.cohi-kpi-spark) {
+    display: block;
+    overflow: visible;
+  }
+
+  :global(.cohi-kpi-bar) {
+    fill: #5aa8b4;
+    transform-origin: center bottom;
+    transform-box: fill-box;
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  :global(.cohi-demo[data-evidence='pending'] .cohi-kpi-bar) {
+    transform: scaleY(0);
+  }
+
+  :global(.cohi-demo[data-evidence='metrics'] .cohi-kpi-bar),
+  :global(.cohi-demo[data-evidence='bullets'] .cohi-kpi-bar),
+  :global(.cohi-demo[data-evidence='shown'] .cohi-kpi-bar) {
+    transform: scaleY(1);
+  }
+
+  :global(.cohi-kpi-area) {
+    opacity: 1;
+    transition: opacity 0.5s ease;
+  }
+
+  :global(.cohi-kpi-area-line) {
+    fill: none;
+    stroke: #0f5f6b;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 180;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 0.7s ease;
+  }
+
+  :global(.cohi-demo[data-evidence='pending'] .cohi-kpi-area) {
+    opacity: 0;
+  }
+
+  :global(.cohi-demo[data-evidence='pending'] .cohi-kpi-area-line) {
+    stroke-dashoffset: 180;
+  }
+
+  @keyframes cohi-caret-blink {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes cohi-dot-pulse {
+    0%,
+    100% {
+      opacity: 0.45;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.35);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cohi-caret,
+    .cohi-demo[data-thinking='true'] .cohi-status-dot,
+    .cohi-metric,
+    .cohi-bullet,
+    :global(.cohi-kpi-bar),
+    :global(.cohi-kpi-area),
+    :global(.cohi-kpi-area-line) {
+      animation: none !important;
+      transition: none !important;
+    }
+
+    .cohi-demo[data-typing='true'] .cohi-caret {
+      opacity: 0;
+    }
+
+    .cohi-metric,
+    .cohi-bullet,
+    :global(.cohi-demo[data-evidence='pending'] .cohi-kpi-bar),
+    :global(.cohi-demo[data-evidence='pending'] .cohi-kpi-area),
+    :global(.cohi-demo[data-evidence='pending'] .cohi-kpi-area-line) {
+      opacity: 1;
+      transform: none;
+      stroke-dashoffset: 0;
+    }
+  }
+</style>
+
+<script>
+  import { initCohiDemo } from '../scripts/cohi-demo';
+  initCohiDemo();
+</script>

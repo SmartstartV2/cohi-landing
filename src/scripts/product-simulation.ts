@@ -17,16 +17,26 @@ const CAPTIONS = [
   'Outcome tracked — leadership can move on.',
 ] as const;
 
-/** ~14s loop including resolution chapter and hold */
+/**
+ * Scene budgets vs animation settle times (delay + duration):
+ * 1 sources: chip flight ~1.8s + stagger 0.45s ≈ 2.25s
+ * 2 KPIs: fill delay 0.35s + 0.75s ≈ 1.1s
+ * 3 watch sort: delay 0.3s + 0.5s ≈ 0.8s
+ * 4 Cohi brief: delay 0.15–0.2s + 0.45–0.55s ≈ 0.7s
+ * 5 floats: prompts delay 0.38s + 0.5s ≈ 0.9s
+ * 6 success/check: ≈ 0.8s
+ * 7 secondary resolve: ≈ 0.8s
+ * 8 final hold / last checks: ≈ 0.95s
+ */
 const SCENES: Scene[] = [
-  { id: 1, caption: CAPTIONS[0], duration: 1600 },
-  { id: 2, caption: CAPTIONS[1], duration: 1500 },
+  { id: 1, caption: CAPTIONS[0], duration: 2500 },
+  { id: 2, caption: CAPTIONS[1], duration: 1700 },
   { id: 3, caption: CAPTIONS[2], duration: 1600 },
-  { id: 4, caption: CAPTIONS[3], duration: 1700 },
-  { id: 5, caption: CAPTIONS[4], duration: 1700 },
-  { id: 6, caption: CAPTIONS[5], duration: 1700 },
-  { id: 7, caption: CAPTIONS[6], duration: 1600 },
-  { id: 8, caption: CAPTIONS[7], duration: 2400 },
+  { id: 4, caption: CAPTIONS[3], duration: 2300 },
+  { id: 5, caption: CAPTIONS[4], duration: 2100 },
+  { id: 6, caption: CAPTIONS[5], duration: 1900 },
+  { id: 7, caption: CAPTIONS[6], duration: 1700 },
+  { id: 8, caption: CAPTIONS[7], duration: 2800 },
 ];
 
 type KpiState = { value: string; fill: string; warning?: boolean; success?: boolean };
@@ -92,9 +102,7 @@ const WATCH_STATUS: Record<string, Partial<Record<SceneId, string>>> = {
   },
 };
 
-const SUCCESS_COPY: Partial<
-  Record<SceneId, { title: string; body: string }>
-> = {
+const SUCCESS_COPY: Partial<Record<SceneId, { title: string; body: string }>> = {
   6: {
     title: 'West Region fallout under control — forecast risk reduced',
     body: 'Action completed by Regional Operations Lead. Pull-through stabilizing.',
@@ -146,8 +154,7 @@ function applyKpiState(root: HTMLElement, scene: SceneId, generation: number) {
     else note.textContent = 'Stabilizing';
   }
 
-  const entries = Object.entries(map);
-  entries.forEach(([key, state], index) => {
+  Object.entries(map).forEach(([key, state], index) => {
     window.setTimeout(() => {
       if (generation !== sceneGeneration) return;
       const card = root.querySelector<HTMLElement>(`[data-sim-kpi="${key}"]`);
@@ -174,8 +181,7 @@ function applyWatchStatuses(root: HTMLElement, scene: SceneId, generation: numbe
     else badge.textContent = 'By severity';
   }
 
-  const order = ['fallout', 'cost', 'margin'] as const;
-  order.forEach((id, index) => {
+  (['fallout', 'cost', 'margin'] as const).forEach((id, index) => {
     const byScene = WATCH_STATUS[id];
     if (!byScene) return;
     window.setTimeout(() => {
@@ -211,18 +217,66 @@ function applySceneState(root: HTMLElement, scene: SceneId) {
   applyKpiState(root, scene, generation);
   applyWatchStatuses(root, scene, generation);
   applySuccessCopy(root, scene);
+  return generation;
 }
 
-function setScene(root: HTMLElement, caption: HTMLElement | null, scene: SceneId, text: string) {
-  root.dataset.scene = String(scene);
-  if (caption) {
-    caption.style.opacity = '0';
-    window.setTimeout(() => {
-      caption.textContent = text;
-      caption.style.opacity = '1';
-    }, 160);
+async function typeCaption(
+  caption: HTMLElement,
+  text: string,
+  generation: number,
+  reduceMotion: boolean,
+) {
+  const textEl = caption.querySelector<HTMLElement>('[data-sim-caption-text]') ?? caption;
+
+  if (reduceMotion) {
+    textEl.textContent = text;
+    caption.classList.remove('is-typing');
+    return;
   }
-  applySceneState(root, scene);
+
+  caption.classList.add('is-typing');
+  textEl.textContent = '';
+
+  // Calm executive pace — shorter lines feel snappier
+  const msPerChar = text.length > 42 ? 22 : 28;
+
+  for (let i = 0; i < text.length; i++) {
+    if (generation !== sceneGeneration) return;
+    textEl.textContent = text.slice(0, i + 1);
+    await wait(msPerChar);
+  }
+
+  if (generation !== sceneGeneration) return;
+  // Brief caret hold, then hide
+  await wait(280);
+  if (generation === sceneGeneration) {
+    caption.classList.remove('is-typing');
+  }
+}
+
+function setScene(
+  root: HTMLElement,
+  caption: HTMLElement | null,
+  scene: SceneId,
+  text: string,
+  reduceMotion = false,
+) {
+  root.dataset.scene = String(scene);
+  const generation = applySceneState(root, scene);
+  if (caption) {
+    void typeCaption(caption, text, generation, reduceMotion);
+  }
+}
+
+function syncPlayButton(root: HTMLElement, playing: boolean) {
+  const btn = root.querySelector<HTMLButtonElement>('[data-sim-play]');
+  if (!btn) return;
+  btn.setAttribute('aria-pressed', String(playing));
+  btn.setAttribute('aria-label', playing ? 'Pause simulation' : 'Play simulation');
+  const playIcon = btn.querySelector('[data-sim-icon-play]');
+  const pauseIcon = btn.querySelector('[data-sim-icon-pause]');
+  playIcon?.classList.toggle('hidden', playing);
+  pauseIcon?.classList.toggle('hidden', !playing);
 }
 
 export function initProductSimulation() {
@@ -230,41 +284,112 @@ export function initProductSimulation() {
   if (!root) return;
 
   const caption = root.querySelector<HTMLElement>('[data-sim-caption]');
+  const playBtn = root.querySelector<HTMLButtonElement>('[data-sim-play]');
+  const replayBtn = root.querySelector<HTMLButtonElement>('[data-sim-replay]');
+  const dots = root.querySelectorAll<HTMLButtonElement>('[data-sim-dot]');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (reduceMotion) {
-    setScene(root, caption, 8, CAPTIONS[7]);
+    setScene(root, caption, 8, CAPTIONS[7], true);
+    syncPlayButton(root, false);
+    playBtn?.setAttribute('disabled', 'true');
+    replayBtn?.setAttribute('disabled', 'true');
     return;
   }
 
-  let paused = true;
+  let userPaused = false;
+  let offscreen = true;
+  let hoverPaused = false;
+  let jumpTo: SceneId | null = null;
+  let restartLoop = false;
   let started = false;
+
+  const isEffectivelyPaused = () => userPaused || offscreen || hoverPaused;
+  const isUserFacingPlaying = () => !userPaused && !offscreen;
+
+  const updatePlayUi = () => syncPlayButton(root, isUserFacingPlaying());
+
+  const goToScene = (scene: SceneId) => {
+    const entry = SCENES.find((s) => s.id === scene) ?? SCENES[0];
+    setScene(root, caption, entry.id, entry.caption);
+  };
 
   const runLoop = async () => {
     if (started) return;
     started = true;
 
     while (true) {
-      if (paused) {
-        await wait(400);
+      if (isEffectivelyPaused()) {
+        await wait(250);
         continue;
       }
 
-      for (const scene of SCENES) {
-        if (paused) break;
-        setScene(root, caption, scene.id, scene.caption);
-        await wait(scene.duration);
+      if (restartLoop) {
+        restartLoop = false;
+        jumpTo = null;
+      }
+
+      const startIndex = jumpTo ? SCENES.findIndex((s) => s.id === jumpTo) : 0;
+      jumpTo = null;
+
+      for (let i = Math.max(0, startIndex); i < SCENES.length; i++) {
+        if (isEffectivelyPaused() || restartLoop || jumpTo) break;
+        const scene = SCENES[i];
+        goToScene(scene.id);
+
+        const end = performance.now() + scene.duration;
+        while (performance.now() < end) {
+          if (isEffectivelyPaused() || restartLoop || jumpTo) break;
+          await wait(100);
+        }
+        if (isEffectivelyPaused() || restartLoop || jumpTo) break;
       }
     }
   };
 
+  playBtn?.addEventListener('click', () => {
+    userPaused = !userPaused;
+    if (!userPaused) offscreen = false;
+    updatePlayUi();
+  });
+
+  replayBtn?.addEventListener('click', () => {
+    userPaused = false;
+    offscreen = false;
+    restartLoop = true;
+    jumpTo = 1;
+    goToScene(1);
+    updatePlayUi();
+  });
+
+  dots.forEach((dot) => {
+    dot.addEventListener('click', () => {
+      const id = Number(dot.dataset.simDot) as SceneId;
+      if (!id || id < 1 || id > 8) return;
+      userPaused = false;
+      offscreen = false;
+      jumpTo = id;
+      goToScene(id);
+      updatePlayUi();
+    });
+  });
+
+  root.addEventListener('mouseenter', () => {
+    hoverPaused = true;
+  });
+  root.addEventListener('mouseleave', () => {
+    hoverPaused = false;
+  });
+
   const observer = new IntersectionObserver(
     (entries) => {
-      paused = !entries.some((entry) => entry.isIntersecting && entry.intersectionRatio >= 0.2);
+      offscreen = !entries.some((entry) => entry.isIntersecting && entry.intersectionRatio >= 0.2);
+      updatePlayUi();
     },
     { threshold: [0, 0.2, 0.4] },
   );
 
   observer.observe(root);
+  updatePlayUi();
   void runLoop();
 }
