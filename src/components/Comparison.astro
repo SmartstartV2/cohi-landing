@@ -1,0 +1,75 @@
+---
+import Container from './ui/Container.astro';
+import SectionHeading from './ui/SectionHeading.astro';
+
+const traditional = [
+  'Shows charts and reports',
+  'Requires manual interpretation',
+  'Separates data by department',
+  'Tells leaders what happened',
+  'Leaves prioritization to the user',
+];
+
+const coheus = [
+  'Surfaces prioritized business signals',
+  'Explains drivers behind performance changes',
+  'Connects operational and financial context',
+  'Helps leaders focus on action',
+  'Supports faster executive decisions',
+];
+---
+
+<section class="border-b border-line bg-canvas py-20 sm:py-24">
+  <Container>
+    <SectionHeading
+      title="Dashboards show activity. Coheus shows what needs action."
+      align="center"
+      class="max-w-3xl"
+    />
+
+    <div class="mt-12 grid gap-5 lg:grid-cols-2" data-reveal>
+      <div class="rounded-2xl border border-line bg-surface p-6 sm:p-8">
+        <h3 class="text-sm font-semibold uppercase tracking-[0.14em] text-ink-subtle">
+          Traditional BI
+        </h3>
+        <ul class="mt-6 space-y-4">
+          {
+            traditional.map((item) => (
+              <li class="flex gap-3 text-sm leading-relaxed text-ink-muted sm:text-base">
+                <span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-line-strong" aria-hidden="true" />
+                {item}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="rounded-2xl border border-accent/25 bg-surface p-6 shadow-elevated sm:p-8">
+        <h3 class="text-sm font-semibold uppercase tracking-[0.14em] text-accent">Coheus</h3>
+        <ul class="mt-6 space-y-4">
+          {
+            coheus.map((item) => (
+              <li class="flex gap-3 text-sm leading-relaxed text-ink sm:text-base">
+                <span
+                  class="mt-1.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent"
+                  aria-hidden="true"
+                >
+                  <svg class="h-2.5 w-2.5" viewBox="0 0 10 10" fill="none">
+                    <path
+                      d="M2 5.2 L4.1 7.2 L8 2.8"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+                {item}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </Container>
+</section>

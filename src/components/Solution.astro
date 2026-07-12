@@ -1,0 +1,63 @@
+---
+import Container from './ui/Container.astro';
+import SectionHeading from './ui/SectionHeading.astro';
+
+const signals = [
+  'Production',
+  'Pipeline',
+  'Operations',
+  'Profitability',
+  'Risk',
+  'Productivity',
+  'AI Insights',
+];
+---
+
+<section class="scroll-mt-20 border-b border-line bg-canvas py-20 sm:py-24">
+  <Container>
+    <SectionHeading
+      title="Coheus connects the signals behind your mortgage business."
+      description="Coheus acts as an executive intelligence layer for mortgage lenders. It helps leadership teams translate operational data into prioritized insights across profitability, efficiency, fallout, productivity, pipeline health, and cost per loan."
+    />
+
+    <div class="mt-14" data-reveal>
+      <div class="mx-auto max-w-4xl">
+        <div class="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
+          {
+            signals.slice(0, 6).map((signal) => (
+              <div class="rounded-xl border border-line bg-surface px-4 py-3 text-sm font-medium text-ink shadow-card">
+                {signal}
+              </div>
+            ))
+          }
+        </div>
+
+        <div class="relative my-6 flex flex-col items-center" aria-hidden="true">
+          <div class="h-10 w-px bg-gradient-to-b from-line-strong to-accent/40"></div>
+          <div class="flex gap-8 sm:gap-16">
+            <div class="h-8 w-px bg-line"></div>
+            <div class="h-8 w-px bg-line"></div>
+            <div class="h-8 w-px bg-line"></div>
+          </div>
+          <div class="h-6 w-px bg-accent/50"></div>
+        </div>
+
+        <div class="mx-auto max-w-md rounded-2xl border border-accent/20 bg-navy px-6 py-7 text-center shadow-elevated">
+          <p class="text-xs font-semibold uppercase tracking-[0.16em] text-white/55">Coheus</p>
+          <p class="mt-2 font-display text-2xl font-semibold text-white">Executive intelligence</p>
+          <p class="mt-2 text-sm text-white/70">Prioritized signals · clearer context · faster focus</p>
+        </div>
+
+        <div class="relative my-6 flex justify-center" aria-hidden="true">
+          <div class="h-10 w-px bg-gradient-to-b from-accent/50 to-line-strong"></div>
+        </div>
+
+        <div class="flex justify-center">
+          <div class="rounded-xl border border-line bg-surface px-5 py-3.5 text-sm font-medium text-accent shadow-card">
+            {signals[6]}
+          </div>
+        </div>
+      </div>
+    </div>
+  </Container>
+</section>

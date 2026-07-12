@@ -1,0 +1,40 @@
+---
+import Container from './ui/Container.astro';
+import Button from './ui/Button.astro';
+---
+
+<section
+  class="relative overflow-hidden border-b border-line bg-[linear-gradient(165deg,#f3f8f6_0%,#f7faf9_38%,#ffffff_72%,#f5f9f7_100%)]"
+  aria-labelledby="hero-heading"
+>
+  <div
+    class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(15,95,107,0.10),transparent_58%),radial-gradient(ellipse_50%_40%_at_90%_80%,rgba(31,122,77,0.05),transparent_55%),radial-gradient(ellipse_45%_35%_at_8%_70%,rgba(26,122,136,0.04),transparent_50%)]"
+    aria-hidden="true"
+  >
+  </div>
+
+  <Container class="relative pb-40 pt-14 sm:pb-44 sm:pt-20 lg:pb-48 lg:pt-24">
+    <div class="mx-auto max-w-3xl text-center" data-hero-copy>
+      <p class="text-sm font-medium tracking-wide text-accent">
+        Executive intelligence for mortgage leaders
+      </p>
+      <h1
+        id="hero-heading"
+        class="mt-4 font-display text-4xl font-semibold tracking-tight text-ink text-balance sm:text-5xl lg:text-[3.5rem] lg:leading-[1.1]"
+      >
+        Turn mortgage data into executive clarity.
+      </h1>
+      <p class="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-ink-muted sm:text-lg">
+        Coheus helps mortgage leadership teams see what matters, understand what is changing, and
+        act faster from one intelligent workspace.
+      </p>
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+        <Button href="#demo">Test Drive</Button>
+        <Button href="#how-it-works" variant="secondary">See How It Works</Button>
+      </div>
+      <p class="mx-auto mt-6 max-w-xl text-sm leading-relaxed text-ink-subtle">
+        Built for leaders who need fewer dashboards, clearer answers, and faster decisions.
+      </p>
+    </div>
+  </Container>
+</section>

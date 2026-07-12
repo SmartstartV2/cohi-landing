@@ -1,0 +1,60 @@
+---
+import Container from './ui/Container.astro';
+import Card from './ui/Card.astro';
+import SectionHeading from './ui/SectionHeading.astro';
+
+const products = [
+  {
+    title: 'Executive Center',
+    body: 'A command center for leadership visibility, priorities, KPIs, and business signals.',
+  },
+  {
+    title: 'Mortgage Intelligence',
+    body: 'Track production, pipeline movement, fallout, profitability, productivity, cost per loan, and operational performance.',
+  },
+  {
+    title: 'AI Research Lab',
+    body: 'Explore deeper questions, investigate business issues, and turn lender data into strategic insight.',
+  },
+  {
+    title: 'Sales & Relationship Intelligence',
+    body: 'Understand customer, referral, and sales activity with clearer performance visibility.',
+  },
+  {
+    title: 'Operations & Productivity',
+    body: 'See where work slows down, where teams need help, and where friction is affecting outcomes.',
+  },
+  {
+    title: 'Integrations',
+    body: 'Connect with the systems your organization already depends on.',
+  },
+];
+---
+
+<section id="platform" class="scroll-mt-20 border-b border-line bg-surface py-20 sm:py-24">
+  <Container>
+    <SectionHeading title="One intelligent workspace for mortgage leadership." />
+
+    <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
+      {
+        products.map((item) => (
+          <Card class="h-full" data-reveal>
+            <div
+              class="mb-4 flex h-9 w-9 items-center justify-center rounded-lg bg-accent-soft text-accent"
+              aria-hidden="true"
+            >
+              <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none">
+                <rect x="2" y="2" width="5" height="5" rx="1.2" fill="currentColor" opacity="0.9" />
+                <rect x="9" y="2" width="5" height="5" rx="1.2" fill="currentColor" opacity="0.45" />
+                <rect x="2" y="9" width="5" height="5" rx="1.2" fill="currentColor" opacity="0.45" />
+                <rect x="9" y="9" width="5" height="5" rx="1.2" fill="currentColor" opacity="0.7" />
+              </svg>
+            </div>
+            <h3 class="text-lg font-semibold tracking-tight text-ink">{item.title}</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink-muted">{item.body}</p>
+          </Card>
+        ))
+      }
+    </div>
+  </Container>
+</section>

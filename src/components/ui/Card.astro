@@ -1,0 +1,25 @@
+---
+interface Props {
+  class?: string;
+  padding?: 'md' | 'lg';
+  [key: string]: unknown;
+}
+
+const { class: className = '', padding = 'md', ...rest } = Astro.props;
+
+const paddings = {
+  md: 'p-5 sm:p-6',
+  lg: 'p-6 sm:p-8',
+};
+---
+
+<div
+  {...rest}
+  class:list={[
+    'rounded-2xl border border-line bg-surface shadow-card',
+    paddings[padding],
+    className,
+  ]}
+>
+  <slot />
+</div>

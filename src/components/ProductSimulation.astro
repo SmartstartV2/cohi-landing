@@ -1,0 +1,458 @@
+---
+import Container from './ui/Container.astro';
+
+const signals = [
+  'Production',
+  'Pipeline',
+  'Operations',
+  'Profitability',
+  'Risk',
+  'Productivity',
+];
+---
+
+<section
+  id="how-it-works"
+  class="relative z-10 -mt-28 scroll-mt-20 bg-surface pb-20 sm:-mt-32 sm:pb-24"
+  aria-label="How Coheus turns business signals into executive action"
+>
+  <Container>
+    <div
+      class="sim relative mx-auto max-w-5xl"
+      data-sim
+      data-scene="1"
+      role="region"
+      aria-label="Animated product simulation showing how Coheus turns business signals into executive action"
+    >
+      <p
+        class="sim-caption mb-5 min-h-[1.5rem] text-center text-sm font-medium tracking-wide text-accent transition-opacity duration-500 sm:text-base"
+        data-sim-caption
+        aria-live="polite"
+      >
+        Coheus connects signals across your mortgage business.
+      </p>
+
+      <div
+        class="sim-frame shadow-elevated relative overflow-hidden rounded-2xl border border-line bg-surface"
+      >
+        <div class="flex items-center justify-between border-b border-line px-4 py-3 sm:px-5">
+          <div class="flex items-center gap-2" aria-hidden="true">
+            <span class="h-2.5 w-2.5 rounded-full bg-line-strong"></span>
+            <span class="h-2.5 w-2.5 rounded-full bg-line-strong"></span>
+            <span class="h-2.5 w-2.5 rounded-full bg-line-strong"></span>
+          </div>
+          <p class="text-xs font-medium text-ink-subtle">Coheus · Executive Center</p>
+          <p class="text-xs text-ink-subtle tabular-nums" data-sim-clock>Live</p>
+        </div>
+
+        <!-- Scene 1: inbound signals -->
+        <div
+          class="sim-signals pointer-events-none absolute inset-x-0 top-12 z-20 flex flex-wrap items-start justify-center gap-2 px-4 pt-3 sm:gap-2.5 sm:px-6"
+          data-sim-signals
+          aria-hidden="true"
+        >
+          {
+            signals.map((signal, i) => (
+              <span
+                class:list={[
+                  'sim-signal rounded-full border border-line bg-surface px-3 py-1.5 text-[11px] font-medium text-ink shadow-card sm:text-xs',
+                  i >= 4 && 'hidden sm:inline-flex',
+                ]}
+                style={`--i: ${i}`}
+                data-sim-signal
+              >
+                {signal}
+              </span>
+            ))
+          }
+        </div>
+
+        <div class="relative grid gap-3 bg-canvas/70 p-3 sm:gap-4 sm:p-4 lg:grid-cols-12">
+          <!-- Pipeline -->
+          <div
+            class="sim-card rounded-xl border border-line bg-surface p-4 lg:col-span-4"
+            data-sim-card="pipeline"
+          >
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <p class="text-xs font-medium text-ink-subtle">Pipeline health</p>
+                <p class="mt-1 text-xl font-semibold tracking-tight text-ink sm:text-2xl" data-sim-pipeline-value>
+                  Stable
+                </p>
+              </div>
+              <span
+                class="rounded-md bg-accent-soft px-2 py-1 text-[11px] font-semibold text-accent"
+                data-sim-pipeline-badge
+              >
+                On track
+              </span>
+            </div>
+            <div class="mt-4 flex h-14 items-end gap-1 sm:h-16 sm:gap-1.5" aria-hidden="true">
+              {
+                [42, 55, 48, 62, 58, 70, 66, 74, 68, 78, 72, 80].map((h, i) => (
+                  <span
+                    class="sim-bar flex-1 origin-bottom rounded-sm bg-accent/25"
+                    style={`height: ${h}%; --bar: ${i}`}
+                    data-sim-bar
+                  >
+                    <span class="block h-full w-full rounded-sm bg-accent/75" />
+                  </span>
+                ))
+              }
+            </div>
+          </div>
+
+          <!-- Cost -->
+          <div
+            class="sim-card rounded-xl border border-line bg-surface p-4 lg:col-span-4"
+            data-sim-card="cost"
+          >
+            <p class="text-xs font-medium text-ink-subtle">Cost per loan</p>
+            <p class="mt-1 text-xl font-semibold tracking-tight text-ink sm:text-2xl" data-sim-cost-value>
+              Steady
+            </p>
+            <div class="mt-4 space-y-2.5" aria-hidden="true">
+              <div>
+                <div class="mb-1 flex justify-between text-[11px] text-ink-subtle">
+                  <span>Origination</span>
+                  <span data-sim-cost-label>Steady</span>
+                </div>
+                <div class="h-1.5 overflow-hidden rounded-full bg-canvas">
+                  <div
+                    class="sim-meter h-full rounded-full bg-accent transition-[width] duration-700 ease-out"
+                    style="width: 48%"
+                    data-sim-cost-meter
+                  >
+                  </div>
+                </div>
+              </div>
+              <div class="hidden sm:block">
+                <div class="mb-1 flex justify-between text-[11px] text-ink-subtle">
+                  <span>Processing</span>
+                  <span>Steady</span>
+                </div>
+                <div class="h-1.5 overflow-hidden rounded-full bg-canvas">
+                  <div class="h-full w-[44%] rounded-full bg-accent"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fallout -->
+          <div
+            class="sim-card rounded-xl border border-line bg-surface p-4 lg:col-span-4"
+            data-sim-card="fallout"
+          >
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <p class="text-xs font-medium text-ink-subtle">Fallout risk</p>
+                <p class="mt-1 text-xl font-semibold tracking-tight text-ink sm:text-2xl" data-sim-fallout-value>
+                  Stable
+                </p>
+              </div>
+              <span
+                class="rounded-md bg-accent-soft px-2 py-1 text-[11px] font-semibold text-accent"
+                data-sim-fallout-badge
+              >
+                Clear
+              </span>
+            </div>
+            <ul class="mt-4 space-y-2 text-xs">
+              <li class="flex items-center justify-between">
+                <span class="text-ink-muted">West Region</span>
+                <span class="font-medium text-ink" data-sim-west>Stable</span>
+              </li>
+              <li class="hidden items-center justify-between sm:flex">
+                <span class="text-ink-muted">Refinance lane</span>
+                <span class="font-medium text-ink">Watch</span>
+              </li>
+              <li class="flex items-center justify-between">
+                <span class="text-ink-muted">Purchase flow</span>
+                <span class="font-medium text-success">Stable</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Production / productivity -->
+          <div
+            class="sim-card rounded-xl border border-line bg-surface p-4 lg:col-span-5"
+            data-sim-card="production"
+          >
+            <p class="text-xs font-medium text-ink-subtle">Production & productivity</p>
+            <div class="mt-3 grid grid-cols-3 gap-2 sm:gap-3">
+              <div class="rounded-lg bg-canvas px-2.5 py-2.5 sm:px-3 sm:py-3">
+                <p class="text-[11px] text-ink-subtle">Units</p>
+                <p class="mt-1 text-sm font-semibold text-ink sm:text-lg" data-sim-units>→</p>
+                <p class="text-[11px] text-ink-muted" data-sim-units-label>Steady</p>
+              </div>
+              <div class="rounded-lg bg-canvas px-2.5 py-2.5 sm:px-3 sm:py-3">
+                <p class="text-[11px] text-ink-subtle">Pull-through</p>
+                <p class="mt-1 text-sm font-semibold text-ink sm:text-lg" data-sim-pull>→</p>
+                <p class="text-[11px] text-ink-muted" data-sim-pull-label>Steady</p>
+              </div>
+              <div class="rounded-lg bg-canvas px-2.5 py-2.5 sm:px-3 sm:py-3">
+                <p class="text-[11px] text-ink-subtle">Cycle time</p>
+                <p class="mt-1 text-sm font-semibold text-ink sm:text-lg" data-sim-cycle>→</p>
+                <p class="text-[11px] text-ink-muted" data-sim-cycle-label>Steady</p>
+              </div>
+            </div>
+            <div class="mt-4 hidden h-16 rounded-lg border border-dashed border-line bg-canvas/80 p-3 sm:block" aria-hidden="true">
+              <svg class="h-full w-full" viewBox="0 0 280 56" fill="none" preserveAspectRatio="none">
+                <path
+                  class="sim-spark-fill"
+                  d="M0 36 C 40 34, 70 28, 110 30 C 150 32, 180 24, 220 26 C 250 28, 265 22, 280 20 V 56 H 0 Z"
+                  fill="#0f5f6b"
+                  opacity="0.08"
+                  data-sim-spark-fill></path>
+                <path
+                  class="sim-spark-line"
+                  d="M0 36 C 40 34, 70 28, 110 30 C 150 32, 180 24, 220 26 C 250 28, 265 22, 280 20"
+                  stroke="#0f5f6b"
+                  stroke-width="2"
+                  fill="none"
+                  data-sim-spark-line></path>
+              </svg>
+            </div>
+          </div>
+
+          <!-- AI summary slot (always present, content elevates in scene 3) -->
+          <div
+            class="sim-card relative rounded-xl border border-line bg-navy p-4 text-white lg:col-span-4"
+            data-sim-card="ai"
+          >
+            <div class="flex items-center gap-2">
+              <span class="sim-pulse h-1.5 w-1.5 rounded-full bg-[#7dd3c7]"></span>
+              <p class="text-xs font-medium text-white/70">AI executive summary</p>
+            </div>
+            <p class="mt-3 text-sm leading-relaxed text-white/75" data-sim-ai-brief>
+              Monitoring connected lender signals across production, pipeline, and operations.
+            </p>
+          </div>
+
+          <!-- Priority alerts base -->
+          <div
+            class="sim-card rounded-xl border border-line bg-surface p-4 lg:col-span-3"
+            data-sim-card="alerts"
+          >
+            <p class="text-xs font-medium text-ink-subtle">Priority alerts</p>
+            <ul class="mt-3 space-y-2.5">
+              <li class="rounded-lg border border-line bg-canvas px-3 py-2.5 opacity-60">
+                <p class="text-xs font-semibold text-ink">No urgent items</p>
+                <p class="mt-0.5 text-[11px] text-ink-subtle">Signals within range</p>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Scene 3: insight overlay card -->
+          <div
+            class="sim-insight pointer-events-none absolute inset-x-3 bottom-3 z-30 max-w-lg sm:inset-x-auto sm:bottom-6 sm:left-6 sm:right-auto"
+            data-sim-insight
+            aria-hidden="true"
+          >
+            <div class="rounded-xl border border-accent/20 bg-surface p-4 shadow-elevated sm:p-5">
+              <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-accent">
+                Executive Insight
+              </p>
+              <p class="mt-2 text-sm leading-relaxed text-ink sm:text-[15px]">
+                Fallout risk increased in the West Region, driven by longer processing times and
+                declining pull-through in two branches.
+              </p>
+            </div>
+          </div>
+
+          <!-- Scene 4: priority callout -->
+          <div
+            class="sim-priority pointer-events-none absolute inset-x-3 bottom-3 z-30 sm:inset-x-auto sm:bottom-6 sm:right-6 sm:left-auto sm:max-w-sm"
+            data-sim-priority
+            aria-hidden="true"
+          >
+            <div class="rounded-xl border border-warning/30 bg-surface p-4 shadow-elevated sm:p-5">
+              <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-warning">
+                Needs attention
+              </p>
+              <p class="mt-2 text-sm font-medium leading-snug text-ink sm:text-[15px]">
+                Review West Region fallout drivers and processing delays.
+              </p>
+              <div class="mt-4 hidden flex-wrap gap-2 sm:flex">
+                <span class="rounded-md border border-line bg-canvas px-2.5 py-1 text-[11px] font-medium text-ink-muted"
+                  >Review branches</span
+                >
+                <span class="rounded-md border border-line bg-canvas px-2.5 py-1 text-[11px] font-medium text-ink-muted"
+                  >Open signal report</span
+                >
+                <span class="rounded-md bg-accent-soft px-2.5 py-1 text-[11px] font-semibold text-accent"
+                  >Ask AI</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-5 flex items-center justify-center gap-2" aria-hidden="true">
+        {
+          [1, 2, 3, 4].map((n) => (
+            <span
+              class="sim-dot h-1.5 w-1.5 rounded-full bg-line-strong transition-all duration-300"
+              data-sim-dot={n}
+            />
+          ))
+        }
+      </div>
+
+      <p class="sr-only">
+        This animation demonstrates Coheus connecting business signals, detecting changes, generating
+        an executive insight, and surfacing a recommended focus area. The sequence loops automatically.
+      </p>
+    </div>
+  </Container>
+</section>
+
+<style>
+  .sim-signals {
+    opacity: 0;
+    transform: translateY(-4px);
+    transition:
+      opacity 0.5s ease,
+      transform 0.5s ease;
+  }
+
+  .sim[data-scene='1'] .sim-signals {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .sim-signal {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.96);
+    animation: none;
+  }
+
+  .sim[data-scene='1'] .sim-signal {
+    animation: sim-signal-in 2.8s ease-in-out both;
+    animation-delay: calc(var(--i) * 0.12s);
+  }
+
+  @keyframes sim-signal-in {
+    0% {
+      opacity: 0;
+      transform: translateY(-12px) scale(0.96);
+    }
+    18% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    70% {
+      opacity: 1;
+      transform: translateY(18px) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(42px) scale(0.92);
+    }
+  }
+
+  .sim-card {
+    transition:
+      border-color 0.45s ease,
+      box-shadow 0.45s ease,
+      transform 0.45s ease;
+  }
+
+  .sim[data-scene='2'] .sim-card {
+    border-color: color-mix(in oklab, var(--color-accent) 18%, var(--color-line));
+  }
+
+  .sim[data-scene='2'] [data-sim-bar] {
+    animation: sim-bar-pulse 1.1s ease both;
+    animation-delay: calc(var(--bar) * 0.04s);
+  }
+
+  @keyframes sim-bar-pulse {
+    0% {
+      transform: scaleY(0.72);
+    }
+    100% {
+      transform: scaleY(1);
+    }
+  }
+
+  .sim-insight,
+  .sim-priority {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 0.55s ease,
+      transform 0.55s ease;
+  }
+
+  .sim[data-scene='3'] .sim-insight {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .sim[data-scene='4'] .sim-priority,
+  .sim[data-scene='5'] .sim-priority {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .sim[data-scene='3'] [data-sim-card='ai'],
+  .sim[data-scene='4'] [data-sim-card='alerts'] {
+    box-shadow: var(--shadow-elevated);
+    transform: translateY(-2px);
+  }
+
+  .sim-pulse {
+    opacity: 0.9;
+  }
+
+  .sim[data-scene='3'] .sim-pulse,
+  .sim[data-scene='4'] .sim-pulse {
+    animation: sim-pulse 1.4s ease-in-out infinite;
+  }
+
+  @keyframes sim-pulse {
+    0%,
+    100% {
+      opacity: 0.35;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  .sim-dot {
+    opacity: 0.45;
+  }
+
+  .sim[data-scene='1'] .sim-dot[data-sim-dot='1'],
+  .sim[data-scene='2'] .sim-dot[data-sim-dot='2'],
+  .sim[data-scene='3'] .sim-dot[data-sim-dot='3'],
+  .sim[data-scene='4'] .sim-dot[data-sim-dot='4'],
+  .sim[data-scene='5'] .sim-dot[data-sim-dot='4'] {
+    opacity: 1;
+    background: var(--color-accent);
+    transform: scale(1.25);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sim-signal,
+    .sim[data-scene='2'] [data-sim-bar],
+    .sim-pulse {
+      animation: none !important;
+    }
+
+    .sim-signals,
+    .sim-insight,
+    .sim-priority,
+    .sim-card {
+      transition: none !important;
+    }
+  }
+</style>
+
+<script>
+  import { initProductSimulation } from '../scripts/product-simulation';
+  initProductSimulation();
+</script>

@@ -1,0 +1,39 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import ProductSimulation from '../components/ProductSimulation.astro';
+import PositioningStrip from '../components/PositioningStrip.astro';
+import Problem from '../components/Problem.astro';
+import Solution from '../components/Solution.astro';
+import Outcomes from '../components/Outcomes.astro';
+import AiIntelligence from '../components/AiIntelligence.astro';
+import ProductExperience from '../components/ProductExperience.astro';
+import Comparison from '../components/Comparison.astro';
+import Security from '../components/Security.astro';
+import FinalCta from '../components/FinalCta.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout>
+  <Nav />
+  <main>
+    <Hero />
+    <ProductSimulation />
+    <PositioningStrip />
+    <Problem />
+    <Solution />
+    <Outcomes />
+    <AiIntelligence />
+    <ProductExperience />
+    <Comparison />
+    <Security />
+    <FinalCta />
+  </main>
+  <Footer />
+</Layout>
+
+<script>
+  import { initAnimations } from '../scripts/animations';
+  initAnimations();
+</script>

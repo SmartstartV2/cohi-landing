@@ -1,0 +1,44 @@
+---
+import Container from './ui/Container.astro';
+import Card from './ui/Card.astro';
+import SectionHeading from './ui/SectionHeading.astro';
+
+const problems = [
+  {
+    title: 'Too many dashboards',
+    body: 'Teams spend time searching for answers instead of acting on them.',
+  },
+  {
+    title: 'Disconnected data',
+    body: 'Performance, productivity, fallout, and profitability often live in separate systems.',
+  },
+  {
+    title: 'Slow executive visibility',
+    body: 'Leadership sees what happened, but not always why it happened.',
+  },
+  {
+    title: 'Hidden business friction',
+    body: 'Operational issues quietly increase cost, reduce pull-through, and impact margins.',
+  },
+];
+---
+
+<section id="solutions" class="scroll-mt-20 border-b border-line bg-surface py-20 sm:py-24">
+  <Container>
+    <SectionHeading
+      title="Mortgage leaders do not need more reports. They need clearer signals."
+      description="Mortgage companies already have data across LOS, CRM, finance, operations, marketing, HR, and servicing systems. The challenge is knowing which signals matter, what is changing, and where leadership should focus first."
+    />
+
+    <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:gap-5">
+      {
+        problems.map((item) => (
+          <Card class="h-full" data-reveal>
+            <h3 class="text-lg font-semibold tracking-tight text-ink">{item.title}</h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink-muted sm:text-base">{item.body}</p>
+          </Card>
+        ))
+      }
+    </div>
+  </Container>
+</section>
