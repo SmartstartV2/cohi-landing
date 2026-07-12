@@ -12,38 +12,89 @@ const sources = [
 ];
 
 const pulseMetrics = [
-  { key: 'pipeline', label: 'Pipeline Health', idle: 'Stable' },
-  { key: 'fallout', label: 'Fallout Risk', idle: 'Clear' },
-  { key: 'cost', label: 'Cost Per Loan', idle: 'Steady' },
-  { key: 'margin', label: 'Margin / Profitability', idle: 'Stable' },
-];
-
-const secondarySignals = [
   {
-    title: 'Cost per loan rising',
-    area: 'Origination',
-    stake: 'Unit cost pressure',
+    key: 'pipeline',
+    label: 'Pipeline Health',
+    idle: 'Stable',
+    tone: 'teal',
+    icon: 'pipeline',
   },
   {
+    key: 'fallout',
+    label: 'Fallout Risk',
+    idle: 'Clear',
+    tone: 'amber',
+    icon: 'risk',
+  },
+  {
+    key: 'cost',
+    label: 'Cost Per Loan',
+    idle: 'Steady',
+    tone: 'navy',
+    icon: 'cost',
+  },
+  {
+    key: 'margin',
+    label: 'Margin / Profitability',
+    idle: 'Stable',
+    tone: 'green',
+    icon: 'margin',
+  },
+];
+
+const watchItems = [
+  {
+    id: 'fallout',
+    severity: 'High',
+    title: 'West Region pull-through slipping',
+    detail: 'Forecast & margin at risk',
+    orderIdle: 2,
+    orderActive: 1,
+    icon: 'risk',
+  },
+  {
+    id: 'cost',
+    severity: 'Medium',
+    title: 'Cost per loan rising',
+    detail: 'Origination · unit cost pressure',
+    orderIdle: 1,
+    orderActive: 2,
+    icon: 'cost',
+  },
+  {
+    id: 'margin',
+    severity: 'Watch',
     title: 'Margin pressure building',
-    area: 'Pricing & secondary',
-    stake: 'Spread protection',
+    detail: 'Pricing & secondary · spread',
+    orderIdle: 3,
+    orderActive: 3,
+    icon: 'margin',
   },
 ];
 
 const prompts = [
   'Where should leadership focus today?',
   'What changed across the pipeline this week?',
-  'Why is cost per loan increasing?',
 ];
 
-const focusItems = [
-  '1 high-priority signal',
-  'West Region under review',
-  '1 recommended action',
-  'Owner assigned',
-  'Outcome tracking started',
+const outcomeItems = [
+  { id: 'fallout', label: 'West Region fallout — cleared', step: 6 },
+  { id: 'cost', label: 'Cost per loan — acknowledged', step: 7 },
+  { id: 'track', label: 'Outcome tracking on', step: 8 },
 ];
+
+const toneClass: Record<string, string> = {
+  teal: 'bg-accent-soft text-accent',
+  amber: 'bg-[#f8efe2] text-warning',
+  navy: 'bg-[#e8eef4] text-navy',
+  green: 'bg-[#e7f3ec] text-success',
+};
+
+const severityClass: Record<string, string> = {
+  High: 'bg-[#f8efe2] text-warning',
+  Medium: 'bg-[#e8eef4] text-navy',
+  Watch: 'bg-accent-soft text-accent',
+};
 ---
 
 <section
@@ -61,11 +112,11 @@ const focusItems = [
     />
 
     <div
-      class="sim relative mx-auto max-w-4xl"
+      class="sim relative mx-auto max-w-4xl pb-16 sm:pb-20"
       data-sim
       data-scene="1"
       role="region"
-      aria-label="Animated Executive Center simulation showing how Coheus turns mortgage data into prioritized executive action"
+      aria-label="Animated Executive Center simulation showing how Coheus turns mortgage data into prioritized executive action and tracked outcomes"
     >
       <p
         class="sim-caption mb-4 min-h-[1.5rem] text-center text-sm font-medium tracking-wide text-accent transition-opacity duration-500 sm:mb-5 sm:text-base"
@@ -75,254 +126,551 @@ const focusItems = [
         Coheus connects the signals behind your mortgage business.
       </p>
 
-      <div class="sim-frame shadow-elevated relative overflow-hidden rounded-2xl border border-line bg-surface">
-        <div class="flex items-center justify-between border-b border-line px-4 py-3 sm:px-5">
-          <div class="flex items-center gap-2" aria-hidden="true">
-            <span class="h-2.5 w-2.5 rounded-full bg-line-strong"></span>
-            <span class="h-2.5 w-2.5 rounded-full bg-line-strong"></span>
-            <span class="h-2.5 w-2.5 rounded-full bg-line-strong"></span>
-          </div>
-          <p class="text-xs font-medium text-ink-subtle">Coheus · Executive Center</p>
-          <p class="text-xs text-ink-subtle tabular-nums" data-sim-clock>Live</p>
-        </div>
-
-        <!-- Scene 1: business-domain chips -->
+      <div class="sim-stage relative">
         <div
-          class="sim-sources pointer-events-none absolute inset-x-0 top-12 z-30 flex flex-wrap items-start justify-center gap-1.5 px-3 pt-3 sm:gap-2 sm:px-5"
-          data-sim-sources
-          aria-hidden="true"
+          class="sim-frame shadow-elevated relative rounded-2xl border border-line bg-surface ring-1 ring-accent/5"
         >
-          {
-            sources.map((source, i) => (
-              <span
-                class="sim-source rounded-full border border-line bg-surface px-2.5 py-1 text-[10px] font-medium text-ink shadow-card sm:px-3 sm:py-1.5 sm:text-xs"
-                style={`--i: ${i}`}
-                data-sim-source
-              >
-                {source}
-              </span>
-            ))
-          }
-        </div>
-
-        <div class="relative bg-canvas/60 p-3 sm:p-5">
-          <!-- Business Pulse: thin CEO strip -->
-          <div class="sim-pulse-strip mb-3 sm:mb-4" data-sim-pulse>
-            <div class="mb-2 flex items-center justify-between gap-3 px-0.5">
-              <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-subtle">
-                Business Pulse
-              </p>
-              <p class="text-[11px] text-ink-subtle" data-sim-pulse-note>Monitoring</p>
-            </div>
-            <div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {
-                pulseMetrics.map((metric) => (
-                  <div
-                    class="sim-kpi rounded-xl border border-line bg-surface px-3 py-2.5"
-                    data-sim-kpi={metric.key}
-                  >
-                    <p class="text-[10px] font-medium leading-snug text-ink-subtle sm:text-[11px]">
-                      {metric.label}
-                    </p>
-                    <p
-                      class="mt-1 text-sm font-semibold tracking-tight text-ink sm:text-[15px]"
-                      data-sim-kpi-value
-                    >
-                      {metric.idle}
-                    </p>
-                    <div class="mt-2 h-1 overflow-hidden rounded-full bg-canvas" aria-hidden="true">
-                      <div class="sim-kpi-fill h-full w-2/5 rounded-full bg-accent/70" data-sim-kpi-fill>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              }
-            </div>
-          </div>
-
-          <!-- CEO morning brief: Signal → Cohi → Action -->
-          <div class="grid gap-3 lg:grid-cols-12 lg:gap-4">
-            <!-- Needs attention -->
-            <div class="flex flex-col gap-3 lg:col-span-5" data-sim-panel="signals">
-              <div
-                class="sim-hero-signal rounded-xl border border-line bg-surface p-3.5 sm:p-4"
-                data-sim-hero
-              >
-                <div class="flex items-center justify-between gap-2">
-                  <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-subtle">
-                    Needs attention today
-                  </p>
-                  <span
-                    class="sim-hero-badge rounded-md bg-canvas px-2 py-0.5 text-[10px] font-semibold text-ink-subtle"
-                    data-sim-hero-badge
-                  >
-                    Watch
-                  </span>
-                </div>
-
-                <div class="sim-hero-idle mt-3" data-sim-hero-idle>
-                  <p class="text-sm text-ink-muted">Scanning for material changes…</p>
-                </div>
-
-                <div class="sim-hero-active hidden" data-sim-hero-active>
-                  <p class="mt-1 text-[15px] font-semibold leading-snug tracking-tight text-ink sm:text-base">
-                    West Region pull-through is slipping — forecast at risk
-                  </p>
-                  <div class="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-ink-muted">
-                    <span><span class="text-ink-subtle">Where:</span> West Region</span>
-                    <span><span class="text-ink-subtle">At stake:</span> Revenue forecast &amp; margin</span>
-                  </div>
-                  <p class="mt-2 text-[11px] font-medium text-warning">Severity: High</p>
-                </div>
-              </div>
-
-              <div class="sim-secondary space-y-2" data-sim-secondary>
-                <p class="px-0.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-subtle">
-                  Also watching
-                </p>
-                {
-                  secondarySignals.map((signal) => (
-                    <div class="rounded-lg border border-line bg-surface/90 px-3 py-2.5">
-                      <p class="text-xs font-semibold text-ink">{signal.title}</p>
-                      <p class="mt-1 text-[11px] text-ink-muted">
-                        {signal.area} · {signal.stake}
-                      </p>
-                    </div>
-                  ))
-                }
-              </div>
-            </div>
-
-            <!-- Cohi + Action -->
-            <div class="flex flex-col gap-3 lg:col-span-7">
-              <div
-                class="sim-brief flex-1 rounded-xl border border-line bg-navy p-4 text-white sm:p-5"
-                data-sim-brief
-              >
-                <div class="flex items-center gap-2">
-                  <span class="sim-pulse-dot h-1.5 w-1.5 rounded-full bg-[#7dd3c7]"></span>
-                  <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-white/60">
-                    Cohi Executive Brief
-                  </p>
-                </div>
-                <p class="sim-brief-idle mt-3 text-sm leading-relaxed text-white/70" data-sim-brief-idle>
-                  Cohi is reviewing connected signals across production, pipeline, operations, and
-                  profitability for material leadership issues.
-                </p>
-                <p
-                  class="sim-brief-active mt-3 hidden text-sm leading-relaxed text-white/92 sm:text-[15px]"
-                  data-sim-brief-active
-                >
-                  Fallout risk increased in the West Region, driven by longer processing cycle times,
-                  delayed borrower conditions, and lower pull-through in two branches. This puts near-term
-                  forecast and margin protection at risk.
-                </p>
-              </div>
-
-              <div
-                class="sim-action rounded-xl border border-line bg-surface p-4 sm:p-5"
-                data-sim-action
-              >
-                <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-subtle">
-                  Recommended Action
-                </p>
-                <div class="sim-action-idle mt-3" data-sim-action-idle>
-                  <p class="text-sm text-ink-muted">Waiting for prioritized executive focus…</p>
-                </div>
-                <div class="sim-action-active hidden" data-sim-action-active>
-                  <p class="text-sm font-semibold leading-snug text-ink sm:text-[15px]">
-                    Review West Region fallout drivers and processing delays.
-                  </p>
-                  <dl class="mt-3.5 grid gap-2 text-[12px] sm:grid-cols-2">
-                    <div>
-                      <dt class="font-medium text-ink-subtle">Owner</dt>
-                      <dd class="mt-0.5 text-ink">Regional Operations Lead</dd>
-                    </div>
-                    <div>
-                      <dt class="font-medium text-ink-subtle">Next step</dt>
-                      <dd class="mt-0.5">
-                        <span class="rounded-md bg-accent-soft px-2 py-0.5 text-[11px] font-semibold text-accent">
-                          Open signal report
-                        </span>
-                      </dd>
-                    </div>
-                    <div class="sm:col-span-2">
-                      <dt class="font-medium text-ink-subtle">Impact</dt>
-                      <dd class="mt-0.5 text-ink-muted">
-                        Revenue forecast, capacity planning, margin protection
-                      </dd>
-                    </div>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Ask Cohi: closing beat only -->
-          <div class="sim-prompts mt-3 hidden sm:block" data-sim-prompts>
-            <div class="rounded-xl border border-line bg-surface px-4 py-3">
-              <div class="flex flex-wrap items-center gap-2">
-                <p class="mr-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-subtle">
-                  Ask Cohi
-                </p>
-                {
-                  prompts.map((prompt) => (
-                    <span class="rounded-full border border-line bg-canvas px-2.5 py-1 text-[11px] font-medium text-ink-muted">
-                      {prompt}
-                    </span>
-                  ))
-                }
-              </div>
-            </div>
-          </div>
-
-          <!-- Scene 6: Today's Executive Focus -->
+          <!-- Chrome -->
           <div
-            class="sim-focus pointer-events-none absolute inset-3 z-40 flex items-center justify-center sm:inset-4"
-            data-sim-focus
+            class="flex items-center justify-between gap-3 border-b border-line bg-[linear-gradient(180deg,#fbfcfd_0%,#ffffff_100%)] px-4 py-3 sm:px-5"
+          >
+            <div class="flex items-center gap-2.5">
+              <span
+                class="flex h-7 w-7 items-center justify-center rounded-lg bg-navy text-[11px] font-bold text-white"
+                aria-hidden="true"
+              >
+                C
+              </span>
+              <div>
+                <p class="text-xs font-semibold tracking-tight text-ink">Executive Center</p>
+                <p class="text-[10px] text-ink-subtle">Coheus leadership workspace</p>
+              </div>
+            </div>
+            <div
+              class="inline-flex items-center gap-1.5 rounded-full border border-line bg-canvas px-2.5 py-1"
+            >
+              <span class="sim-live-dot h-1.5 w-1.5 rounded-full bg-success" aria-hidden="true"></span>
+              <p class="text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-subtle" data-sim-clock>
+                Live
+              </p>
+            </div>
+          </div>
+
+          <!-- Scene 1: business-domain chips -->
+          <div
+            class="sim-sources pointer-events-none absolute inset-x-0 top-14 z-30 flex flex-wrap items-start justify-center gap-1.5 px-3 pt-3 sm:gap-2 sm:px-5"
+            data-sim-sources
             aria-hidden="true"
           >
-            <div
-              class="w-full max-w-md rounded-2xl border border-line bg-surface/97 p-5 shadow-elevated backdrop-blur-sm sm:p-6"
-            >
-              <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-accent">
-                Today’s Executive Focus
-              </p>
-              <p class="mt-2 text-sm leading-relaxed text-ink-muted">
-                Leadership has a clear priority, an owner, and a next step — without another dashboard
-                hunt.
-              </p>
-              <ul class="mt-4 space-y-2.5">
+            {
+              sources.map((source, i) => (
+                <span
+                  class="sim-source inline-flex items-center gap-1.5 rounded-full border border-accent/15 bg-surface px-2.5 py-1 text-[10px] font-medium text-ink shadow-card sm:px-3 sm:py-1.5 sm:text-xs"
+                  style={`--i: ${i}`}
+                  data-sim-source
+                >
+                  <span class="h-1.5 w-1.5 rounded-full bg-accent/70" />
+                  {source}
+                </span>
+              ))
+            }
+          </div>
+
+          <div
+            class="sim-body relative bg-[linear-gradient(180deg,#f3f7f6_0%,#f6f7f9_45%,#f8fafb_100%)] p-3 sm:min-h-[23rem] sm:p-5"
+          >
+            <!-- Business Pulse -->
+            <div class="mb-3 sm:mb-4" data-sim-pulse>
+              <div class="mb-2.5 flex items-center justify-between gap-3 px-0.5">
+                <div class="flex items-center gap-2">
+                  <span
+                    class="flex h-5 w-5 items-center justify-center rounded-md bg-accent-soft text-accent"
+                    aria-hidden="true"
+                  >
+                    <svg class="h-3 w-3" viewBox="0 0 12 12" fill="none">
+                      <path
+                        d="M1.5 8.5 L4 5.5 L6.2 7.2 L10.5 2.5"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"></path>
+                    </svg>
+                  </span>
+                  <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-subtle">
+                    Business Pulse
+                  </p>
+                </div>
+                <p
+                  class="rounded-full bg-surface px-2 py-0.5 text-[10px] font-medium text-ink-subtle ring-1 ring-line"
+                  data-sim-pulse-note
+                >
+                  Monitoring
+                </p>
+              </div>
+              <div class="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-2.5">
                 {
-                  focusItems.map((item) => (
-                    <li class="flex items-center gap-2.5 text-sm text-ink">
+                  pulseMetrics.map((metric, i) => (
+                    <div
+                      class="sim-kpi rounded-xl border border-line bg-surface p-3 shadow-[0_1px_0_rgb(11_27_43/0.03)]"
+                      style={`--i: ${i}`}
+                      data-sim-kpi={metric.key}
+                    >
+                      <div class="flex items-start justify-between gap-2">
+                        <span
+                          class:list={[
+                            'flex h-7 w-7 items-center justify-center rounded-lg',
+                            toneClass[metric.tone],
+                          ]}
+                          aria-hidden="true"
+                        >
+                          {metric.icon === 'pipeline' && (
+                            <svg class="h-3.5 w-3.5" viewBox="0 0 14 14" fill="none">
+                              <path
+                                d="M2 10 V4 M5.5 10 V6 M9 10 V3 M12 10 V7"
+                                stroke="currentColor"
+                                stroke-width="1.6"
+                                stroke-linecap="round"
+                              />
+                            </svg>
+                          )}
+                          {metric.icon === 'risk' && (
+                            <svg class="h-3.5 w-3.5" viewBox="0 0 14 14" fill="none">
+                              <path
+                                d="M7 2.2 L12.2 11.5 H1.8 Z"
+                                stroke="currentColor"
+                                stroke-width="1.4"
+                                stroke-linejoin="round"
+                              />
+                              <path
+                                d="M7 5.5 V8.2 M7 9.8 V10.1"
+                                stroke="currentColor"
+                                stroke-width="1.4"
+                                stroke-linecap="round"
+                              />
+                            </svg>
+                          )}
+                          {metric.icon === 'cost' && (
+                            <svg class="h-3.5 w-3.5" viewBox="0 0 14 14" fill="none">
+                              <circle cx="7" cy="7" r="4.6" stroke="currentColor" stroke-width="1.4" />
+                              <path
+                                d="M7 4.4 V9.6 M5.4 5.5 C5.4 4.8 6.1 4.4 7 4.4 C7.9 4.4 8.6 4.8 8.6 5.5 C8.6 6.2 7.9 6.5 7 6.5 C6.1 6.5 5.4 6.9 5.4 7.6 C5.4 8.3 6.1 8.7 7 8.7 C7.9 8.7 8.6 8.3 8.6 7.6"
+                                stroke="currentColor"
+                                stroke-width="1.2"
+                                stroke-linecap="round"
+                              />
+                            </svg>
+                          )}
+                          {metric.icon === 'margin' && (
+                            <svg class="h-3.5 w-3.5" viewBox="0 0 14 14" fill="none">
+                              <path
+                                d="M2.5 9.5 L5.5 6.5 L7.5 8.2 L11.5 3.8"
+                                stroke="currentColor"
+                                stroke-width="1.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              />
+                              <path
+                                d="M9 3.8 H11.5 V6.2"
+                                stroke="currentColor"
+                                stroke-width="1.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              />
+                            </svg>
+                          )}
+                        </span>
+                      </div>
+                      <p class="mt-2.5 text-[10px] font-medium leading-snug text-ink-subtle sm:text-[11px]">
+                        {metric.label}
+                      </p>
+                      <p
+                        class="mt-1 text-sm font-semibold tracking-tight text-ink sm:text-[15px]"
+                        data-sim-kpi-value
+                      >
+                        {metric.idle}
+                      </p>
+                      <div class="mt-2.5 h-1 overflow-hidden rounded-full bg-canvas" aria-hidden="true">
+                        <div
+                          class="sim-kpi-fill h-full w-2/5 rounded-full bg-accent/70"
+                          data-sim-kpi-fill
+                        >
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                }
+              </div>
+            </div>
+
+            <div class="grid gap-3 lg:grid-cols-12 lg:gap-4">
+              <!-- Priority queue -->
+              <div class="lg:col-span-5" data-sim-panel="signals">
+                <div class="rounded-xl border border-line bg-surface p-3.5 shadow-[0_1px_0_rgb(11_27_43/0.03)] sm:p-4">
+                  <div class="mb-3 flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2">
                       <span
-                        class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent"
+                        class="flex h-5 w-5 items-center justify-center rounded-md bg-[#f8efe2] text-warning"
                         aria-hidden="true"
                       >
                         <svg class="h-3 w-3" viewBox="0 0 12 12" fill="none">
                           <path
-                            d="M2.5 6.2 L4.8 8.5 L9.5 3.5"
+                            d="M6 1.8 L10.5 10 H1.5 Z"
                             stroke="currentColor"
-                            stroke-width="1.6"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
+                            stroke-width="1.3"
+                            stroke-linejoin="round"></path>
                         </svg>
                       </span>
-                      {item}
-                    </li>
-                  ))
-                }
-              </ul>
+                      <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-subtle">
+                        Needs attention today
+                      </p>
+                    </div>
+                    <span
+                      class="rounded-full bg-canvas px-2 py-0.5 text-[10px] font-semibold text-ink-subtle ring-1 ring-line"
+                      data-sim-queue-badge
+                    >
+                      By severity
+                    </span>
+                  </div>
+
+                  <ul class="sim-watch-list flex min-h-[11.5rem] flex-col gap-2" data-sim-watch-list>
+                    {
+                      watchItems.map((item, i) => (
+                        <li
+                          class="sim-watch-item relative overflow-hidden rounded-lg border border-line bg-canvas/80 px-3 py-2.5"
+                          style={`--idle: ${item.orderIdle}; --active: ${item.orderActive}; --i: ${i}`}
+                          data-sim-watch={item.id}
+                          data-severity={item.severity.toLowerCase()}
+                        >
+                          <span
+                            class:list={[
+                              'absolute inset-y-0 left-0 w-0.5',
+                              item.severity === 'High'
+                                ? 'bg-warning'
+                                : item.severity === 'Medium'
+                                  ? 'bg-navy/50'
+                                  : 'bg-accent/50',
+                            ]}
+                            aria-hidden="true"
+                          />
+                          <div class="flex items-start gap-2.5 pl-1">
+                            <span
+                              class:list={[
+                                'mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md',
+                                toneClass[
+                                  item.id === 'fallout' ? 'amber' : item.id === 'cost' ? 'navy' : 'teal'
+                                ],
+                              ]}
+                              aria-hidden="true"
+                            >
+                              {item.icon === 'risk' && (
+                                <svg class="h-3 w-3" viewBox="0 0 12 12" fill="none">
+                                  <path
+                                    d="M6 1.8 L10.5 10 H1.5 Z"
+                                    stroke="currentColor"
+                                    stroke-width="1.3"
+                                    stroke-linejoin="round"
+                                  />
+                                </svg>
+                              )}
+                              {item.icon === 'cost' && (
+                                <svg class="h-3 w-3" viewBox="0 0 12 12" fill="none">
+                                  <circle cx="6" cy="6" r="3.8" stroke="currentColor" stroke-width="1.2" />
+                                </svg>
+                              )}
+                              {item.icon === 'margin' && (
+                                <svg class="h-3 w-3" viewBox="0 0 12 12" fill="none">
+                                  <path
+                                    d="M2 8.5 L4.5 6 L6.2 7.4 L10 3.5"
+                                    stroke="currentColor"
+                                    stroke-width="1.3"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                  />
+                                </svg>
+                              )}
+                            </span>
+                            <div class="min-w-0 flex-1">
+                              <div class="flex items-start justify-between gap-2">
+                                <p class="text-xs font-semibold text-ink sm:text-[13px]">{item.title}</p>
+                                <span
+                                  class:list={[
+                                    'shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold',
+                                    severityClass[item.severity],
+                                  ]}
+                                >
+                                  {item.severity}
+                                </span>
+                              </div>
+                              <div class="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                                <p class="text-[11px] text-ink-muted">{item.detail}</p>
+                                <span class="text-[10px] text-line-strong">·</span>
+                                <span
+                                  class="sim-watch-status text-[10px] font-medium text-ink-subtle"
+                                  data-sim-watch-status
+                                >
+                                  Open
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+                      ))
+                    }
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Cohi brief -->
+              <div class="lg:col-span-7">
+                <div
+                  class="sim-brief relative min-h-[11.5rem] overflow-hidden rounded-xl border border-white/10 bg-[linear-gradient(145deg,#13263a_0%,#0f5f6b_78%,#1a7a88_100%)] p-4 text-white sm:min-h-[13.5rem] sm:p-5"
+                  data-sim-brief
+                >
+                  <div
+                    class="pointer-events-none absolute -right-8 -top-10 h-28 w-28 rounded-full bg-white/5"
+                    aria-hidden="true"
+                  >
+                  </div>
+                  <div class="relative flex items-center gap-2.5">
+                    <span
+                      class="flex h-7 w-7 items-center justify-center rounded-lg bg-white/10 text-[#7dd3c7] ring-1 ring-white/15"
+                      aria-hidden="true"
+                    >
+                      <svg class="h-3.5 w-3.5" viewBox="0 0 14 14" fill="none">
+                        <path
+                          d="M7 1.5 V3.2 M7 10.8 V12.5 M1.5 7 H3.2 M10.8 7 H12.5 M3.2 3.2 L4.3 4.3 M9.7 9.7 L10.8 10.8 M10.8 3.2 L9.7 4.3 M4.3 9.7 L3.2 10.8"
+                          stroke="currentColor"
+                          stroke-width="1.3"
+                          stroke-linecap="round"></path>
+                        <circle cx="7" cy="7" r="2.2" stroke="currentColor" stroke-width="1.3"></circle>
+                      </svg>
+                    </span>
+                    <div>
+                      <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-white/65">
+                        Cohi Executive Brief
+                      </p>
+                      <div class="mt-0.5 flex items-center gap-1.5">
+                        <span class="sim-pulse-dot h-1.5 w-1.5 rounded-full bg-[#7dd3c7]"></span>
+                        <p class="text-[10px] text-white/45">AI insight layer</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="relative mt-3.5 min-h-[5.5rem] sm:min-h-[6.5rem]">
+                    <p
+                      class="sim-brief-idle absolute inset-0 text-sm leading-relaxed text-white/72"
+                      data-sim-brief-idle
+                    >
+                      Cohi is reviewing connected signals across production, pipeline, operations, and
+                      profitability for material leadership issues.
+                    </p>
+                    <p
+                      class="sim-brief-active absolute inset-0 text-sm leading-relaxed text-white/92 sm:text-[15px]"
+                      data-sim-brief-active
+                    >
+                      Fallout risk increased in the West Region, driven by longer processing cycle times,
+                      delayed borrower conditions, and lower pull-through in two branches. This puts
+                      near-term forecast and margin protection at risk.
+                    </p>
+                    <p
+                      class="sim-brief-resolved absolute inset-0 text-sm leading-relaxed text-white/92 sm:text-[15px]"
+                      data-sim-brief-resolved
+                    >
+                      West Region fallout is under review with an owner assigned. Early processing
+                      interventions are reducing forecast risk. Secondary cost and margin items remain
+                      acknowledged for follow-up.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating: Recommended Action -->
+        <div
+          class="sim-float-action pointer-events-none absolute -right-1 bottom-8 z-40 w-[min(100%,20rem)] sm:-right-3 sm:bottom-10 md:-right-6"
+          data-sim-float-action
+          aria-hidden="true"
+        >
+          <div
+            class="rounded-xl border border-accent/20 bg-surface p-4 shadow-elevated ring-1 ring-accent/5 sm:p-5"
+          >
+            <div class="flex items-center gap-2">
+              <span
+                class="flex h-7 w-7 items-center justify-center rounded-lg bg-accent-soft text-accent"
+                aria-hidden="true"
+              >
+                <svg class="h-3.5 w-3.5" viewBox="0 0 14 14" fill="none">
+                  <path
+                    d="M3 7 H11 M7.5 3.5 L11 7 L7.5 10.5"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"></path>
+                </svg>
+              </span>
+              <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-accent">
+                Recommended Action
+              </p>
+            </div>
+            <p class="mt-2.5 text-sm font-semibold leading-snug text-ink">
+              Review West Region fallout drivers and processing delays.
+            </p>
+            <dl class="mt-3 space-y-2 text-[11px]">
+              <div class="flex items-center gap-2">
+                <dt class="flex items-center gap-1.5 font-medium text-ink-subtle">
+                  <span class="h-1 w-1 rounded-full bg-accent/60" aria-hidden="true"></span>
+                  Owner
+                </dt>
+                <dd class="text-ink">Regional Operations Lead</dd>
+              </div>
+              <div class="flex items-center gap-2">
+                <dt class="flex items-center gap-1.5 font-medium text-ink-subtle">
+                  <span class="h-1 w-1 rounded-full bg-accent/60" aria-hidden="true"></span>
+                  Next step
+                </dt>
+                <dd>
+                  <span class="rounded-md bg-accent-soft px-2 py-0.5 font-semibold text-accent">
+                    Open signal report
+                  </span>
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+
+        <!-- Floating: Success -->
+        <div
+          class="sim-float-success pointer-events-none absolute -left-1 bottom-6 z-40 w-[min(100%,19rem)] sm:-left-3 sm:bottom-8 md:-left-5"
+          data-sim-float-success
+          aria-hidden="true"
+        >
+          <div
+            class="rounded-xl border border-success/20 bg-surface p-4 shadow-elevated ring-1 ring-success/5 sm:p-5"
+          >
+            <div class="flex items-center gap-2">
+              <span
+                class="flex h-7 w-7 items-center justify-center rounded-lg bg-[#e7f3ec] text-success"
+                aria-hidden="true"
+              >
+                <svg class="h-3.5 w-3.5" viewBox="0 0 14 14" fill="none">
+                  <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.4"></circle>
+                  <path
+                    d="M4.2 7.1 L6.1 9 L9.8 5"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"></path>
+                </svg>
+              </span>
+              <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-success">
+                Outcome tracked
+              </p>
+            </div>
+            <p class="mt-2.5 text-sm font-semibold leading-snug text-ink" data-sim-success-title>
+              West Region fallout under control — forecast risk reduced
+            </p>
+            <p class="mt-2 text-[11px] leading-relaxed text-ink-muted" data-sim-success-body>
+              Action completed by Regional Operations Lead. Pull-through stabilizing.
+            </p>
+          </div>
+        </div>
+
+        <!-- Floating: resolution checklist -->
+        <div
+          class="sim-float-checklist pointer-events-none absolute -right-1 top-16 z-30 hidden w-56 sm:block md:-right-4"
+          data-sim-float-checklist
+          aria-hidden="true"
+        >
+          <div
+            class="rounded-xl border border-line bg-surface/95 p-3.5 shadow-elevated ring-1 ring-navy/5 backdrop-blur-sm"
+          >
+            <div class="flex items-center gap-2">
+              <span
+                class="flex h-5 w-5 items-center justify-center rounded-md bg-[#e8eef4] text-navy"
+                aria-hidden="true"
+              >
+                <svg class="h-3 w-3" viewBox="0 0 12 12" fill="none">
+                  <path
+                    d="M2.5 3.5 H9.5 M2.5 6 H9.5 M2.5 8.5 H7"
+                    stroke="currentColor"
+                    stroke-width="1.3"
+                    stroke-linecap="round"></path>
+                </svg>
+              </span>
+              <p class="text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-subtle">
+                Resolution
+              </p>
+            </div>
+            <ul class="mt-2.5 space-y-2">
+              {
+                outcomeItems.map((item, i) => (
+                  <li
+                    class="sim-check-item flex items-start gap-2 text-[11px] text-ink-muted"
+                    style={`--i: ${i}`}
+                    data-sim-check={item.id}
+                    data-step={item.step}
+                  >
+                    <span
+                      class="sim-check-mark mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border border-line bg-canvas"
+                      aria-hidden="true"
+                    >
+                      <svg class="h-2.5 w-2.5 opacity-0" viewBox="0 0 12 12" fill="none">
+                        <path
+                          d="M2.5 6.2 L4.8 8.5 L9.5 3.5"
+                          stroke="currentColor"
+                          stroke-width="1.8"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </span>
+                    <span data-sim-check-label>{item.label}</span>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </div>
+
+        <!-- Floating: Ask Cohi -->
+        <div
+          class="sim-float-prompts pointer-events-none absolute inset-x-3 -bottom-3 z-20 hidden sm:block sm:inset-x-6"
+          data-sim-float-prompts
+          aria-hidden="true"
+        >
+          <div class="rounded-xl border border-accent/15 bg-surface px-3 py-2.5 shadow-card ring-1 ring-accent/5">
+            <div class="flex flex-wrap items-center gap-1.5">
+              <span
+                class="mr-0.5 flex h-5 w-5 items-center justify-center rounded-md bg-accent-soft text-accent"
+                aria-hidden="true"
+              >
+                <svg class="h-3 w-3" viewBox="0 0 12 12" fill="none">
+                  <path
+                    d="M2.5 3.2 H9.5 V7.8 H6.2 L4 9.5 V7.8 H2.5 Z"
+                    stroke="currentColor"
+                    stroke-width="1.2"
+                    stroke-linejoin="round"></path>
+                </svg>
+              </span>
+              <p class="mr-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-accent">
+                Ask Cohi
+              </p>
+              {
+                prompts.map((prompt) => (
+                  <span class="rounded-full border border-line bg-canvas px-2.5 py-1 text-[10px] font-medium text-ink-muted sm:text-[11px]">
+                    {prompt}
+                  </span>
+                ))
+              }
             </div>
           </div>
         </div>
       </div>
 
-      <div class="mt-4 flex items-center justify-center gap-2 sm:mt-5" aria-hidden="true">
+      <div class="mt-6 flex items-center justify-center gap-2 sm:mt-8" aria-hidden="true">
         {
-          [1, 2, 3, 4, 5, 6].map((n) => (
+          [1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
             <span
               class="sim-dot h-1.5 w-1.5 rounded-full bg-line-strong transition-all duration-300"
               data-sim-dot={n}
@@ -332,15 +680,24 @@ const focusItems = [
       </div>
 
       <p class="sr-only">
-        This animation demonstrates Coheus connecting business signals, detecting material changes,
-        elevating what needs attention, explaining why with Cohi, assigning an owned action, and
-        summarizing today’s executive focus. The sequence loops automatically.
+        This animation demonstrates Coheus connecting business signals, sorting issues by severity,
+        explaining drivers with Cohi, assigning an owned action, clearing the highest-priority item,
+        acknowledging secondary items, and tracking outcomes. The sequence loops automatically.
       </p>
     </div>
   </Container>
 </section>
 
 <style>
+  .sim-stage {
+    overflow: visible;
+  }
+
+  .sim-live-dot {
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-success) 18%, transparent);
+  }
+
+  /* ---- Sources ---- */
   .sim-sources {
     opacity: 0;
     transform: translateY(-4px);
@@ -360,8 +717,8 @@ const focusItems = [
   }
 
   .sim[data-scene='1'] .sim-source {
-    animation: sim-source-in 1.9s ease-in-out both;
-    animation-delay: calc(var(--i) * 0.1s);
+    animation: sim-source-in 1.8s ease-in-out both;
+    animation-delay: calc(var(--i) * 0.09s);
   }
 
   @keyframes sim-source-in {
@@ -383,180 +740,271 @@ const focusItems = [
     }
   }
 
+  /* ---- KPIs (staggered) ---- */
   .sim-kpi {
     transition:
-      border-color 0.45s ease,
-      box-shadow 0.45s ease;
+      border-color 0.5s ease,
+      box-shadow 0.5s ease,
+      transform 0.5s ease;
+    transition-delay: calc(var(--i) * 0.1s);
   }
 
   .sim[data-scene='2'] .sim-kpi,
   .sim[data-scene='3'] .sim-kpi,
   .sim[data-scene='4'] .sim-kpi,
-  .sim[data-scene='5'] .sim-kpi,
-  .sim[data-scene='6'] .sim-kpi {
+  .sim[data-scene='5'] .sim-kpi {
     border-color: color-mix(in oklab, var(--color-accent) 14%, var(--color-line));
   }
 
   .sim[data-scene='2'] .sim-kpi[data-sim-kpi='fallout'],
   .sim[data-scene='3'] .sim-kpi[data-sim-kpi='fallout'],
   .sim[data-scene='4'] .sim-kpi[data-sim-kpi='fallout'],
-  .sim[data-scene='5'] .sim-kpi[data-sim-kpi='fallout'],
-  .sim[data-scene='6'] .sim-kpi[data-sim-kpi='fallout'] {
+  .sim[data-scene='5'] .sim-kpi[data-sim-kpi='fallout'] {
     border-color: color-mix(in oklab, var(--color-warning) 30%, var(--color-line));
+    box-shadow: var(--shadow-card);
+    transform: translateY(-1px);
+  }
+
+  .sim[data-scene='6'] .sim-kpi[data-sim-kpi='fallout'],
+  .sim[data-scene='7'] .sim-kpi[data-sim-kpi='fallout'],
+  .sim[data-scene='8'] .sim-kpi[data-sim-kpi='fallout'] {
+    border-color: color-mix(in oklab, var(--color-success) 28%, var(--color-line));
     box-shadow: var(--shadow-card);
   }
 
   .sim-kpi-fill {
-    transition: width 0.7s ease;
+    transition: width 0.75s ease;
+    transition-delay: calc(var(--i) * 0.1s + 0.05s);
   }
 
-  /* Hero signal elevates from scene 3 */
-  .sim-hero-signal {
+  /* ---- Watch list ---- */
+  .sim-watch-item {
+    order: var(--idle);
     transition:
-      border-color 0.45s ease,
-      box-shadow 0.45s ease,
-      transform 0.45s ease;
+      border-color 0.5s ease,
+      background-color 0.5s ease,
+      opacity 0.5s ease,
+      box-shadow 0.5s ease,
+      transform 0.5s ease;
+    transition-delay: calc(var(--i) * 0.12s);
   }
 
-  .sim[data-scene='3'] .sim-hero-signal,
-  .sim[data-scene='4'] .sim-hero-signal,
-  .sim[data-scene='5'] .sim-hero-signal,
-  .sim[data-scene='6'] .sim-hero-signal {
-    border-color: color-mix(in oklab, var(--color-warning) 30%, var(--color-line));
-    box-shadow: var(--shadow-elevated);
-    transform: translateY(-1px);
+  .sim[data-scene='3'] .sim-watch-item,
+  .sim[data-scene='4'] .sim-watch-item,
+  .sim[data-scene='5'] .sim-watch-item,
+  .sim[data-scene='6'] .sim-watch-item,
+  .sim[data-scene='7'] .sim-watch-item,
+  .sim[data-scene='8'] .sim-watch-item {
+    order: var(--active);
+  }
+
+  .sim[data-scene='3'] [data-sim-watch='fallout'],
+  .sim[data-scene='4'] [data-sim-watch='fallout'],
+  .sim[data-scene='5'] [data-sim-watch='fallout'] {
+    border-color: color-mix(in oklab, var(--color-warning) 32%, var(--color-line));
     background: #fbf7f0;
+    box-shadow: var(--shadow-card);
+    transition-delay: 0.05s;
   }
 
-  .sim-hero-active {
-    display: none;
+  .sim[data-scene='3'] [data-sim-watch='cost'],
+  .sim[data-scene='4'] [data-sim-watch='cost'],
+  .sim[data-scene='5'] [data-sim-watch='cost'] {
+    transition-delay: 0.18s;
   }
 
-  .sim[data-scene='3'] .sim-hero-idle,
-  .sim[data-scene='4'] .sim-hero-idle,
-  .sim[data-scene='5'] .sim-hero-idle,
-  .sim[data-scene='6'] .sim-hero-idle {
-    display: none;
+  .sim[data-scene='3'] [data-sim-watch='margin'],
+  .sim[data-scene='4'] [data-sim-watch='margin'],
+  .sim[data-scene='5'] [data-sim-watch='margin'] {
+    transition-delay: 0.3s;
   }
 
-  .sim[data-scene='3'] .sim-hero-active,
-  .sim[data-scene='4'] .sim-hero-active,
-  .sim[data-scene='5'] .sim-hero-active,
-  .sim[data-scene='6'] .sim-hero-active {
-    display: block;
-    animation: sim-fade-up 0.5s ease both;
+  .sim[data-scene='6'] [data-sim-watch='fallout'],
+  .sim[data-scene='7'] [data-sim-watch='fallout'],
+  .sim[data-scene='8'] [data-sim-watch='fallout'] {
+    border-color: color-mix(in oklab, var(--color-success) 30%, var(--color-line));
+    background: color-mix(in oklab, var(--color-success) 6%, white);
+    opacity: 0.92;
+    transition-delay: 0.08s;
   }
 
-  .sim-secondary {
-    opacity: 0.55;
-    transition: opacity 0.45s ease;
-  }
-
-  .sim[data-scene='3'] .sim-secondary,
-  .sim[data-scene='4'] .sim-secondary,
-  .sim[data-scene='5'] .sim-secondary {
+  .sim[data-scene='7'] [data-sim-watch='cost'],
+  .sim[data-scene='8'] [data-sim-watch='cost'] {
+    border-color: color-mix(in oklab, var(--color-accent) 22%, var(--color-line));
     opacity: 0.85;
+    transition-delay: 0.22s;
   }
 
-  /* Cohi brief centers narrative from scene 4 */
+  .sim[data-scene='8'] [data-sim-watch='margin'] {
+    opacity: 0.7;
+    transition-delay: 0.36s;
+  }
+
+  /* ---- Cohi brief ---- */
   .sim-brief {
     transition:
-      box-shadow 0.45s ease,
-      transform 0.45s ease,
-      opacity 0.45s ease;
-    opacity: 0.8;
+      box-shadow 0.55s ease,
+      transform 0.55s ease;
+    transition-delay: 0.12s;
   }
 
   .sim[data-scene='4'] .sim-brief,
-  .sim[data-scene='5'] .sim-brief,
-  .sim[data-scene='6'] .sim-brief {
-    opacity: 1;
+  .sim[data-scene='5'] .sim-brief {
     box-shadow: var(--shadow-elevated);
     transform: translateY(-2px);
+  }
+
+  .sim-brief-idle,
+  .sim-brief-active,
+  .sim-brief-resolved {
+    opacity: 0;
+    transition: opacity 0.45s ease;
+  }
+
+  .sim-brief-idle {
+    transition-delay: 0s;
   }
 
   .sim-brief-active {
-    display: none;
+    transition-delay: 0.15s;
   }
 
-  .sim[data-scene='4'] .sim-brief-idle,
-  .sim[data-scene='5'] .sim-brief-idle,
-  .sim[data-scene='6'] .sim-brief-idle {
-    display: none;
+  .sim-brief-resolved {
+    transition-delay: 0.2s;
+  }
+
+  .sim[data-scene='1'] .sim-brief-idle,
+  .sim[data-scene='2'] .sim-brief-idle,
+  .sim[data-scene='3'] .sim-brief-idle {
+    opacity: 1;
   }
 
   .sim[data-scene='4'] .sim-brief-active,
-  .sim[data-scene='5'] .sim-brief-active,
-  .sim[data-scene='6'] .sim-brief-active {
-    display: block;
-    animation: sim-fade-up 0.55s ease both;
-  }
-
-  .sim-action {
-    transition:
-      border-color 0.45s ease,
-      box-shadow 0.45s ease,
-      transform 0.45s ease,
-      opacity 0.45s ease;
-    opacity: 0.65;
-  }
-
-  .sim[data-scene='5'] .sim-action,
-  .sim[data-scene='6'] .sim-action {
+  .sim[data-scene='5'] .sim-brief-active {
     opacity: 1;
-    border-color: color-mix(in oklab, var(--color-accent) 24%, var(--color-line));
-    box-shadow: var(--shadow-elevated);
-    transform: translateY(-2px);
   }
 
-  .sim[data-scene='5'] .sim-action-idle,
-  .sim[data-scene='6'] .sim-action-idle {
-    display: none;
-  }
-
-  .sim[data-scene='5'] .sim-action-active,
-  .sim[data-scene='6'] .sim-action-active {
-    display: block;
-    animation: sim-fade-up 0.55s ease both;
-  }
-
-  /* Ask Cohi appears late */
-  .sim-prompts {
-    opacity: 0;
-    transform: translateY(6px);
-    transition:
-      opacity 0.45s ease,
-      transform 0.45s ease;
-    pointer-events: none;
-  }
-
-  .sim[data-scene='5'] .sim-prompts,
-  .sim[data-scene='6'] .sim-prompts {
+  .sim[data-scene='6'] .sim-brief-resolved,
+  .sim[data-scene='7'] .sim-brief-resolved,
+  .sim[data-scene='8'] .sim-brief-resolved {
     opacity: 1;
-    transform: translateY(0);
-  }
-
-  .sim-focus {
-    opacity: 0;
-    transform: translateY(10px);
-    transition:
-      opacity 0.5s ease,
-      transform 0.5s ease;
-    background: color-mix(in oklab, var(--color-canvas) 58%, transparent);
-  }
-
-  .sim[data-scene='6'] .sim-focus {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .sim-pulse-dot {
-    opacity: 0.85;
   }
 
   .sim[data-scene='4'] .sim-pulse-dot,
   .sim[data-scene='5'] .sim-pulse-dot {
     animation: sim-pulse 1.4s ease-in-out infinite;
+  }
+
+  /* ---- Floating layers ---- */
+  .sim-float-action,
+  .sim-float-success,
+  .sim-float-checklist,
+  .sim-float-prompts {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+
+  .sim-float-checklist {
+    transition:
+      opacity 0.55s ease,
+      transform 0.55s ease;
+    transition-delay: 0s;
+  }
+
+  .sim-float-action {
+    transition:
+      opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: 0.2s;
+  }
+
+  .sim-float-prompts {
+    transition:
+      opacity 0.5s ease,
+      transform 0.5s ease;
+    transition-delay: 0.38s;
+  }
+
+  .sim-float-success {
+    transition:
+      opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: 0.16s;
+  }
+
+  .sim[data-scene='5'] .sim-float-action {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  .sim[data-scene='6'] .sim-float-success,
+  .sim[data-scene='7'] .sim-float-success,
+  .sim[data-scene='8'] .sim-float-success {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  .sim[data-scene='5'] .sim-float-checklist,
+  .sim[data-scene='6'] .sim-float-checklist,
+  .sim[data-scene='7'] .sim-float-checklist,
+  .sim[data-scene='8'] .sim-float-checklist {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  .sim[data-scene='5'] .sim-float-prompts,
+  .sim[data-scene='8'] .sim-float-prompts {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  .sim-check-item {
+    transition:
+      color 0.45s ease,
+      opacity 0.45s ease;
+    transition-delay: calc(var(--i) * 0.16s + 0.1s);
+  }
+
+  .sim-check-mark {
+    transition:
+      background-color 0.45s ease,
+      border-color 0.45s ease,
+      color 0.45s ease;
+    transition-delay: calc(var(--i) * 0.16s + 0.1s);
+  }
+
+  .sim-check-mark svg {
+    transition: opacity 0.4s ease;
+    transition-delay: calc(var(--i) * 0.16s + 0.22s);
+  }
+
+  .sim[data-scene='6'] [data-sim-check='fallout'],
+  .sim[data-scene='7'] [data-sim-check='fallout'],
+  .sim[data-scene='8'] [data-sim-check='fallout'],
+  .sim[data-scene='7'] [data-sim-check='cost'],
+  .sim[data-scene='8'] [data-sim-check='cost'],
+  .sim[data-scene='8'] [data-sim-check='track'] {
+    color: var(--color-ink);
+  }
+
+  .sim[data-scene='6'] [data-sim-check='fallout'] .sim-check-mark,
+  .sim[data-scene='7'] [data-sim-check='fallout'] .sim-check-mark,
+  .sim[data-scene='8'] [data-sim-check='fallout'] .sim-check-mark,
+  .sim[data-scene='7'] [data-sim-check='cost'] .sim-check-mark,
+  .sim[data-scene='8'] [data-sim-check='cost'] .sim-check-mark,
+  .sim[data-scene='8'] [data-sim-check='track'] .sim-check-mark {
+    border-color: transparent;
+    background: var(--color-accent-soft);
+    color: var(--color-accent);
+  }
+
+  .sim[data-scene='6'] [data-sim-check='fallout'] .sim-check-mark svg,
+  .sim[data-scene='7'] [data-sim-check='fallout'] .sim-check-mark svg,
+  .sim[data-scene='8'] [data-sim-check='fallout'] .sim-check-mark svg,
+  .sim[data-scene='7'] [data-sim-check='cost'] .sim-check-mark svg,
+  .sim[data-scene='8'] [data-sim-check='cost'] .sim-check-mark svg,
+  .sim[data-scene='8'] [data-sim-check='track'] .sim-check-mark svg {
+    opacity: 1;
   }
 
   @keyframes sim-pulse {
@@ -569,17 +1017,6 @@ const focusItems = [
     }
   }
 
-  @keyframes sim-fade-up {
-    from {
-      opacity: 0;
-      transform: translateY(8px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
   .sim-dot {
     opacity: 0.4;
   }
@@ -589,61 +1026,67 @@ const focusItems = [
   .sim[data-scene='3'] .sim-dot[data-sim-dot='3'],
   .sim[data-scene='4'] .sim-dot[data-sim-dot='4'],
   .sim[data-scene='5'] .sim-dot[data-sim-dot='5'],
-  .sim[data-scene='6'] .sim-dot[data-sim-dot='6'] {
+  .sim[data-scene='6'] .sim-dot[data-sim-dot='6'],
+  .sim[data-scene='7'] .sim-dot[data-sim-dot='7'],
+  .sim[data-scene='8'] .sim-dot[data-sim-dot='8'] {
     opacity: 1;
     background: var(--color-accent);
     transform: scale(1.25);
   }
 
-  /* Mobile: Signal → Brief → Action */
   @media (max-width: 639px) {
-    .sim[data-scene='1'] .sim-secondary,
-    .sim[data-scene='2'] .sim-secondary {
-      display: none;
+    .sim-float-action {
+      right: 0.5rem;
+      left: 0.5rem;
+      width: auto;
+      bottom: -0.25rem;
     }
 
-    .sim[data-scene='1'] .sim-action,
-    .sim[data-scene='2'] .sim-action,
-    .sim[data-scene='3'] .sim-action {
-      display: none;
+    .sim-float-success {
+      left: 0.5rem;
+      right: 0.5rem;
+      width: auto;
+      bottom: -0.25rem;
     }
 
-    .sim[data-scene='1'] .sim-brief {
-      display: none;
+    .sim[data-scene='5'] .sim-float-action {
+      opacity: 1;
     }
 
-    .sim[data-scene='1'] .sim-pulse-strip,
-    .sim[data-scene='2'] .sim-pulse-strip {
-      opacity: 0.9;
-    }
-
-    .sim-prompts {
-      display: none !important;
+    .sim[data-scene='6'] .sim-float-action,
+    .sim[data-scene='7'] .sim-float-action,
+    .sim[data-scene='8'] .sim-float-action {
+      opacity: 0;
+      pointer-events: none;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .sim-source,
-    .sim-pulse-dot,
-    .sim-brief-active,
-    .sim-action-active,
-    .sim-hero-active {
+    .sim-pulse-dot {
       animation: none !important;
     }
 
     .sim-sources,
     .sim-kpi,
-    .sim-hero-signal,
+    .sim-watch-item,
     .sim-brief,
-    .sim-action,
-    .sim-focus,
-    .sim-prompts,
+    .sim-brief-idle,
+    .sim-brief-active,
+    .sim-brief-resolved,
+    .sim-float-action,
+    .sim-float-success,
+    .sim-float-checklist,
+    .sim-float-prompts,
     .sim-kpi-fill,
-    .sim-secondary {
+    .sim-check-item,
+    .sim-check-mark,
+    .sim-check-mark svg {
       transition: none !important;
     }
 
-    .sim[data-scene='6'] .sim-focus {
+    .sim[data-scene='8'] .sim-float-success,
+    .sim[data-scene='8'] .sim-float-checklist {
       opacity: 1;
       transform: none;
     }
