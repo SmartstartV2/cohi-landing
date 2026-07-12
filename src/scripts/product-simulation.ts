@@ -1,4 +1,4 @@
-type SceneId = 1 | 2 | 3 | 4 | 5;
+type SceneId = 1 | 2 | 3 | 4 | 5 | 6;
 
 interface Scene {
   id: SceneId;
@@ -7,98 +7,82 @@ interface Scene {
 }
 
 const CAPTIONS = [
-  'Coheus connects signals across your mortgage business.',
+  'Coheus connects the signals behind your mortgage business.',
   'See what changed.',
+  'Know what needs attention first.',
   'Understand why it matters.',
-  'Know where to focus.',
+  'Move from insight to action.',
+  'Today’s Executive Focus',
 ] as const;
 
+/** ~11.5s loop; longer hold on the executive focus close */
 const SCENES: Scene[] = [
-  { id: 1, caption: CAPTIONS[0], duration: 3200 },
-  { id: 2, caption: CAPTIONS[1], duration: 3400 },
-  { id: 3, caption: CAPTIONS[2], duration: 3600 },
-  { id: 4, caption: CAPTIONS[3], duration: 3600 },
-  { id: 5, caption: CAPTIONS[3], duration: 1400 },
+  { id: 1, caption: CAPTIONS[0], duration: 1700 },
+  { id: 2, caption: CAPTIONS[1], duration: 1600 },
+  { id: 3, caption: CAPTIONS[2], duration: 1700 },
+  { id: 4, caption: CAPTIONS[3], duration: 1900 },
+  { id: 5, caption: CAPTIONS[4], duration: 1800 },
+  { id: 6, caption: CAPTIONS[5], duration: 2800 },
 ];
+
+const KPI_IDLE: Record<string, { value: string; fill: string; warning?: boolean }> = {
+  pipeline: { value: 'Stable', fill: '40%' },
+  fallout: { value: 'Clear', fill: '28%' },
+  cost: { value: 'Steady', fill: '42%' },
+  margin: { value: 'Stable', fill: '36%' },
+};
+
+const KPI_ACTIVE: Record<string, { value: string; fill: string; warning?: boolean }> = {
+  pipeline: { value: 'Watch', fill: '58%' },
+  fallout: { value: 'Elevated', fill: '78%', warning: true },
+  cost: { value: 'Rising', fill: '70%', warning: true },
+  margin: { value: 'Pressure', fill: '62%', warning: true },
+};
 
 const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
-function applyMetricState(root: HTMLElement, scene: SceneId) {
-  const set = (selector: string, text: string) => {
-    const el = root.querySelector(selector);
-    if (el) el.textContent = text;
-  };
+function applyKpiState(root: HTMLElement, active: boolean) {
+  const map = active ? KPI_ACTIVE : KPI_IDLE;
+  const note = root.querySelector('[data-sim-pulse-note]');
+  if (note) note.textContent = active ? 'Changes detected' : 'Monitoring';
 
-  const meter = root.querySelector<HTMLElement>('[data-sim-cost-meter]');
-  const badgePipeline = root.querySelector<HTMLElement>('[data-sim-pipeline-badge]');
-  const badgeFallout = root.querySelector<HTMLElement>('[data-sim-fallout-badge]');
-  const west = root.querySelector<HTMLElement>('[data-sim-west]');
+  Object.entries(map).forEach(([key, state]) => {
+    const card = root.querySelector<HTMLElement>(`[data-sim-kpi="${key}"]`);
+    if (!card) return;
+    const value = card.querySelector('[data-sim-kpi-value]');
+    const fill = card.querySelector<HTMLElement>('[data-sim-kpi-fill]');
+    if (value) {
+      value.textContent = state.value;
+      value.className = state.warning
+        ? 'mt-1 text-sm font-semibold tracking-tight text-warning sm:text-[15px]'
+        : 'mt-1 text-sm font-semibold tracking-tight text-ink sm:text-[15px]';
+    }
+    if (fill) {
+      fill.style.width = state.fill;
+      fill.className = state.warning
+        ? 'sim-kpi-fill h-full rounded-full bg-warning/70'
+        : 'sim-kpi-fill h-full rounded-full bg-accent/70';
+    }
+  });
+}
 
-  if (scene < 2) {
-    set('[data-sim-pipeline-value]', 'Stable');
-    set('[data-sim-cost-value]', 'Steady');
-    set('[data-sim-cost-label]', 'Steady');
-    set('[data-sim-fallout-value]', 'Stable');
-    set('[data-sim-units]', '→');
-    set('[data-sim-units-label]', 'Steady');
-    set('[data-sim-pull]', '→');
-    set('[data-sim-pull-label]', 'Steady');
-    set('[data-sim-cycle]', '→');
-    set('[data-sim-cycle-label]', 'Steady');
-    set(
-      '[data-sim-ai-brief]',
-      'Monitoring connected lender signals across production, pipeline, and operations.',
-    );
-    if (meter) meter.style.width = '48%';
-    if (badgePipeline) {
-      badgePipeline.textContent = 'On track';
-      badgePipeline.className =
-        'rounded-md bg-accent-soft px-2 py-1 text-[11px] font-semibold text-accent';
-    }
-    if (badgeFallout) {
-      badgeFallout.textContent = 'Clear';
-      badgeFallout.className =
-        'rounded-md bg-accent-soft px-2 py-1 text-[11px] font-semibold text-accent';
-    }
-    if (west) {
-      west.textContent = 'Stable';
-      west.className = 'font-medium text-ink';
-    }
+function applyHeroBadge(root: HTMLElement, elevated: boolean) {
+  const badge = root.querySelector('[data-sim-hero-badge]');
+  if (!badge) return;
+  if (elevated) {
+    badge.textContent = 'High priority';
+    badge.className =
+      'sim-hero-badge rounded-md bg-[#f8efe2] px-2 py-0.5 text-[10px] font-semibold text-warning';
     return;
   }
+  badge.textContent = 'Watch';
+  badge.className =
+    'sim-hero-badge rounded-md bg-canvas px-2 py-0.5 text-[10px] font-semibold text-ink-subtle';
+}
 
-  set('[data-sim-pipeline-value]', 'Softening');
-  set('[data-sim-cost-value]', 'Rising');
-  set('[data-sim-cost-label]', 'Elevated');
-  set('[data-sim-fallout-value]', 'Attention');
-  set('[data-sim-units]', '↑');
-  set('[data-sim-units-label]', 'Improving');
-  set('[data-sim-pull]', '↓');
-  set('[data-sim-pull-label]', 'Declining');
-  set('[data-sim-cycle]', '↓');
-  set('[data-sim-cycle-label]', 'Slower');
-  if (meter) meter.style.width = '72%';
-  if (badgePipeline) {
-    badgePipeline.textContent = 'Watch';
-    badgePipeline.className =
-      'rounded-md bg-[#f8efe2] px-2 py-1 text-[11px] font-semibold text-warning';
-  }
-  if (badgeFallout) {
-    badgeFallout.textContent = 'Early signal';
-    badgeFallout.className =
-      'rounded-md bg-[#f8efe2] px-2 py-1 text-[11px] font-semibold text-warning';
-  }
-  if (west) {
-    west.textContent = 'Rising';
-    west.className = 'font-medium text-warning';
-  }
-
-  if (scene >= 3) {
-    set(
-      '[data-sim-ai-brief]',
-      'West Region fallout is rising. Processing delays and weaker pull-through are the primary drivers.',
-    );
-  }
+function applySceneState(root: HTMLElement, scene: SceneId) {
+  applyKpiState(root, scene >= 2);
+  applyHeroBadge(root, scene >= 3);
 }
 
 function setScene(root: HTMLElement, caption: HTMLElement | null, scene: SceneId, text: string) {
@@ -108,9 +92,9 @@ function setScene(root: HTMLElement, caption: HTMLElement | null, scene: SceneId
     window.setTimeout(() => {
       caption.textContent = text;
       caption.style.opacity = '1';
-    }, 180);
+    }, 160);
   }
-  applyMetricState(root, scene);
+  applySceneState(root, scene);
 }
 
 export function initProductSimulation() {
@@ -121,8 +105,7 @@ export function initProductSimulation() {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (reduceMotion) {
-    setScene(root, caption, 4, CAPTIONS[3]);
-    applyMetricState(root, 4);
+    setScene(root, caption, 6, CAPTIONS[5]);
     return;
   }
 
@@ -149,9 +132,9 @@ export function initProductSimulation() {
 
   const observer = new IntersectionObserver(
     (entries) => {
-      paused = !entries.some((entry) => entry.isIntersecting && entry.intersectionRatio >= 0.25);
+      paused = !entries.some((entry) => entry.isIntersecting && entry.intersectionRatio >= 0.2);
     },
-    { threshold: [0, 0.25, 0.5] },
+    { threshold: [0, 0.2, 0.4] },
   );
 
   observer.observe(root);
