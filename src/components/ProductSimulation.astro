@@ -159,15 +159,15 @@ const severityClass: Record<string, string> = {
 ---
 
 <section
-  id="how-it-works"
-  class="relative scroll-mt-20 bg-[linear-gradient(180deg,#ffffff_0%,#ffffff_18%,#f4f6fa_42%,#f4f6fa_100%)] pb-6 pt-0 flow-root sm:pb-8 lg:pb-10"
+  class="relative bg-[linear-gradient(180deg,#ffffff_0%,#ffffff_18%,#f4f6fa_42%,#f4f6fa_100%)] pb-6 pt-0 flow-root sm:pb-8 lg:pb-10"
   aria-label="How Coheus works"
 >
   <h2 id="exec-center-heading" class="sr-only">From lender signals to executive action</h2>
   <Container>
-    <!-- Negative margin is contained by flow-root so only this card peeks — section bg stays put -->
+    <!-- Negative margin peeks into the hero; id lives on this card so scroll clears the nav -->
     <div
-      class="sim relative z-10 mx-auto -mt-[120px] max-w-4xl pb-4 sm:pb-6"
+      id="how-it-works"
+      class="sim relative z-10 mx-auto -mt-[120px] max-w-4xl scroll-mt-24 pb-4 sm:scroll-mt-28 sm:pb-6"
       data-sim
       data-scene="1"
       role="region"

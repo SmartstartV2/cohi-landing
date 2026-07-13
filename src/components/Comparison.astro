@@ -32,7 +32,6 @@ const moments = [
 
     <div
       class="relative mt-12 overflow-hidden rounded-2xl border border-line bg-surface shadow-card lg:mt-14"
-      data-reveal
     >
       <div
         class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_0%,rgba(0,51,160,0.05),transparent_55%)]"
@@ -42,6 +41,7 @@ const moments = [
 
       <div
         class="relative grid border-b border-line sm:grid-cols-2"
+        data-reveal
       >
         <div class="flex items-center gap-2 border-b border-line px-5 py-3.5 sm:border-b-0 sm:border-r sm:px-6">
           <span
@@ -61,10 +61,13 @@ const moments = [
         </div>
       </div>
 
-      <ul class="relative m-0 list-none divide-y divide-line p-0">
+      <ul class="relative m-0 list-none divide-y divide-line p-0" data-reveal-stagger>
         {
           moments.map((moment) => (
-            <li class="grid sm:grid-cols-2">
+            <li
+              class="comparison-row group grid transition-colors duration-200 hover:bg-accent-soft/35 sm:grid-cols-2"
+              data-reveal-item
+            >
               <p class="border-b border-line px-5 py-4 text-sm leading-relaxed text-ink-muted sm:border-b-0 sm:border-r sm:px-6 sm:py-5 sm:text-[15px]">
                 {moment.without}
               </p>

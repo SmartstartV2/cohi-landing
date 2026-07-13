@@ -8,7 +8,7 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
 export function initAnimations() {
   if (reduceMotion) {
     gsap.set(
-      '[data-hero-item], [data-hero-word], [data-reveal], [data-security-row], .security-icon',
+      '[data-hero-item], [data-hero-word], [data-reveal], [data-reveal-item], [data-security-row], .security-icon',
       {
         clearProps: 'all',
         opacity: 1,
@@ -115,8 +115,30 @@ export function initAnimations() {
     });
   });
 
+  initRevealStagger();
   initOutcomesLoop();
   initSecurityPanel();
+}
+
+function initRevealStagger() {
+  gsap.utils.toArray<HTMLElement>('[data-reveal-stagger]').forEach((group) => {
+    const items = gsap.utils.toArray<HTMLElement>('[data-reveal-item]', group);
+    if (!items.length) return;
+
+    gsap.from(items, {
+      y: 14,
+      opacity: 0,
+      duration: 0.45,
+      stagger: 0.08,
+      ease: 'power2.out',
+      clearProps: 'transform',
+      scrollTrigger: {
+        trigger: group,
+        start: 'top 88%',
+        toggleActions: 'play none none none',
+      },
+    });
+  });
 }
 
 function initHeroHover(

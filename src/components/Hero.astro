@@ -4,10 +4,11 @@ import Button from './ui/Button.astro';
 ---
 
 <section
-  class="relative overflow-hidden bg-[linear-gradient(165deg,#e8eef8_0%,#eef2f8_42%,#f4f6fa_100%)]"
+  id="top"
+  class="relative bg-[linear-gradient(165deg,#e8eef8_0%,#eef2f8_42%,#f4f6fa_100%)]"
   aria-labelledby="hero-heading"
 >
-  <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+  <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
     <div
       class="absolute inset-0 bg-[radial-gradient(ellipse_90%_60%_at_50%_-12%,rgba(0,51,160,0.14),transparent_55%),radial-gradient(ellipse_45%_40%_at_88%_48%,rgba(0,26,82,0.05),transparent_60%),radial-gradient(ellipse_40%_36%_at_8%_72%,rgba(0,166,81,0.07),transparent_55%)]"
     >
@@ -49,10 +50,10 @@ import Button from './ui/Button.astro';
 
       <h1
         id="hero-heading"
-        class="mt-7 font-display text-[2.6rem] font-bold leading-[1.1] tracking-[-0.03em] text-balance sm:mt-8 sm:text-[3.5rem] sm:leading-[1.06] lg:text-[4.25rem] lg:leading-[1.04]"
+        class="mt-7 overflow-visible font-display text-[2.6rem] font-bold leading-[1.15] tracking-[-0.03em] text-balance sm:mt-8 sm:text-[3.5rem] sm:leading-[1.12] lg:text-[4.25rem] lg:leading-[1.1]"
       >
         <span
-          class="hero-signal inline-block text-ink opacity-0 motion-reduce:opacity-100"
+          class="hero-signal inline-block py-[0.08em] text-ink opacity-0 motion-reduce:opacity-100"
           data-hero-word
           data-hero-signal
         >Signals.</span>
@@ -130,5 +131,8 @@ import Button from './ui/Button.astro';
     background-clip: text;
     color: transparent;
     -webkit-text-fill-color: transparent;
+    /* Extra paint box so gradient + glow aren’t cropped at the baseline */
+    padding-bottom: 0.12em;
+    margin-bottom: -0.12em;
   }
 </style>

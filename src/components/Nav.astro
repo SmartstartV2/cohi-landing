@@ -5,6 +5,7 @@ import Button from './ui/Button.astro';
 const base = import.meta.env.BASE_URL;
 
 const centerLinks = [
+  { label: 'Home', href: '#top' },
   { label: 'Why Cohi', href: '#problem' },
   { label: 'Cohi', href: '#ai-intelligence' },
   { label: 'Platform', href: '#platform' },
@@ -28,6 +29,7 @@ const centerLinks = [
       href={base}
       class="relative z-10 flex shrink-0 items-center transition-opacity duration-200 hover:opacity-80"
       aria-label="Coheus home"
+      data-nav-home
     >
       <img
         src="https://www.coheus.com/coheus-logo.png"
@@ -215,5 +217,18 @@ const centerLinks = [
 
   panel?.querySelectorAll('a').forEach((link) => {
     link.addEventListener('click', () => setOpen(false));
+  });
+
+  const scrollHome = (event: Event) => {
+    event.preventDefault();
+    setOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (window.location.hash) {
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+  };
+
+  document.querySelectorAll<HTMLAnchorElement>('a[href="#top"], [data-nav-home]').forEach((link) => {
+    link.addEventListener('click', scrollHome);
   });
 </script>
