@@ -2,62 +2,592 @@
 import Container from './ui/Container.astro';
 import SectionHeading from './ui/SectionHeading.astro';
 
-const signals = [
-  'Production',
-  'Pipeline',
-  'Operations',
-  'Profitability',
-  'Risk',
-  'Productivity',
-  'Cohi Insights',
+const outcomes = [
+  {
+    id: 'layer',
+    title: 'From noise',
+    body: 'Same lender DNA as the weekly pack—now Cohi can rank what matters.',
+    stageLabel: 'Same data. Now ranked.',
+  },
+  {
+    id: 'rank',
+    title: 'Critical wins',
+    body: 'Cohi surfaces Immediate Action Required first—everything else waits.',
+    stageLabel: 'One morning priority',
+  },
+  {
+    id: 'context',
+    title: 'Why it matters',
+    body: 'Drivers and a clear takeaway so leadership can decide without another debate.',
+    stageLabel: 'Explain the shift',
+  },
+  {
+    id: 'cohi',
+    title: 'Before coffee',
+    body: 'The Daily Brief delivers the answer before the first call—Signals. Not Noise.',
+    stageLabel: 'Actionable before coffee',
+  },
 ];
+
+/** Same four reads as Problem — badges flip from Equal to ranked urgency. */
+const noiseSignals = [
+  {
+    id: 'fallout',
+    label: 'Fallout',
+    value: '$23M exposure',
+    ranked: 'Critical',
+    tone: 'warning',
+  },
+  {
+    id: 'cost',
+    label: 'Late closings',
+    value: '67 loans at risk',
+    ranked: 'Needs Attention',
+    tone: 'navy',
+  },
+  {
+    id: 'working',
+    label: 'LO tiers',
+    value: '7 Top Tier carrying',
+    ranked: "What's Working",
+    tone: 'success',
+  },
+  {
+    id: 'margin',
+    label: 'Govvie mix',
+    value: '12% off target',
+    ranked: 'Context & Trends',
+    tone: 'muted',
+  },
+];
+
+const rankedSignals = [
+  {
+    id: 'fallout',
+    cardLabel: 'Immediate Action Required',
+    title: '$23M closing & fallout exposure',
+    meta: '67 late · 74 fallout risk',
+    badge: 'Critical',
+    tone: 'warning',
+    primary: true,
+  },
+  {
+    id: 'cost',
+    cardLabel: 'Monitor Closely',
+    title: 'Bottom-tier originators stalling',
+    meta: '35% with <1 app by mid-month',
+    badge: 'Needs Attention',
+    tone: 'muted',
+    primary: false,
+  },
+  {
+    id: 'working',
+    cardLabel: "What's Working",
+    title: 'Top Tier carrying production',
+    meta: '7 LOs · load-bearing revenue',
+    badge: "What's Working",
+    tone: 'success',
+    primary: false,
+  },
+];
+
+const drivers = [
+  'Longer processing cycle times',
+  'Delayed borrower conditions',
+  'Lower pull-through in two branches',
+];
+
+const badgeClass: Record<string, string> = {
+  warning: 'bg-[#f3e8d4] text-warning',
+  success: 'bg-[#e7f3ec] text-success',
+  muted: 'bg-line/70 text-ink-subtle',
+  navy: 'bg-[#e8eef4] text-navy',
+};
+
+const valueTone: Record<string, string> = {
+  warning: 'text-warning',
+  success: 'text-success',
+  muted: 'text-ink',
+  navy: 'text-navy',
+};
 ---
 
-<section class="scroll-mt-20 border-b border-line bg-canvas py-20 sm:py-24">
+<section id="solution" class="scroll-mt-20 bg-canvas py-20 sm:py-24" data-solution>
   <Container>
-    <SectionHeading
-      title="Coheus connects the signals behind your mortgage business."
-      description="Coheus acts as an executive intelligence layer for mortgage lenders. It helps leadership teams translate operational data into prioritized insights across profitability, efficiency, fallout, productivity, pipeline health, and cost per loan."
-    />
+    <div class="grid items-start gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
+      <div class="lg:sticky lg:top-28">
+        <p
+          class="mb-3 text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-accent"
+          data-reveal
+        >
+          How Cohi works
+        </p>
+        <SectionHeading
+          title="Cohi turns your lender DNA into executive intelligence."
+          description="The industry doesn’t need more dashboards—it needs answers. Cohi ranks Critical, Needs Attention, What’s Working, and Context & Trends—so leadership acts on what moves the needle before coffee."
+        />
 
-    <div class="mt-14" data-reveal>
-      <div class="mx-auto max-w-4xl">
-        <div class="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
+        <div
+          class="mt-10 space-y-2"
+          role="tablist"
+          aria-label="How Cohi works"
+          data-solution-tabs
+        >
           {
-            signals.slice(0, 6).map((signal) => (
-              <div class="rounded-xl border border-line bg-surface px-4 py-3 text-sm font-medium text-ink shadow-card">
-                {signal}
-              </div>
+            outcomes.map((item, index) => (
+              <button
+                type="button"
+                role="tab"
+                id={`solution-tab-${item.id}`}
+                aria-controls={`solution-panel-${item.id}`}
+                aria-selected={index === 0 ? 'true' : 'false'}
+                tabindex={index === 0 ? 0 : -1}
+                data-solution-tab={item.id}
+                data-reveal
+                class="solution-tab group w-full cursor-pointer rounded-xl border border-transparent px-4 py-3.5 text-left transition-[border-color,background-color,box-shadow,color,transform] duration-200 hover:border-line hover:bg-surface/80 hover:shadow-sm aria-selected:border-accent/20 aria-selected:bg-surface aria-selected:shadow-card aria-selected:hover:border-accent/30 aria-selected:hover:bg-surface"
+              >
+                <span class="flex items-start gap-3">
+                  <span
+                    data-tab-index
+                    class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-canvas text-[11px] font-bold text-ink-subtle ring-1 ring-line transition-colors duration-300"
+                    aria-hidden="true"
+                  >
+                    {index + 1}
+                  </span>
+                  <span class="min-w-0">
+                    <span
+                      data-tab-title
+                      class="block text-sm font-semibold tracking-tight text-ink-muted transition-colors duration-300"
+                    >
+                      {item.title}
+                    </span>
+                    <span
+                      data-tab-body
+                      class="mt-1 block text-sm leading-relaxed text-ink-subtle transition-colors duration-300"
+                    >
+                      {item.body}
+                    </span>
+                  </span>
+                </span>
+              </button>
             ))
           }
         </div>
+      </div>
 
-        <div class="relative my-6 flex flex-col items-center" aria-hidden="true">
-          <div class="h-10 w-px bg-gradient-to-b from-line-strong to-accent/40"></div>
-          <div class="flex gap-8 sm:gap-16">
-            <div class="h-8 w-px bg-line"></div>
-            <div class="h-8 w-px bg-line"></div>
-            <div class="h-8 w-px bg-line"></div>
+      <div
+        class="solution-flow relative overflow-hidden rounded-2xl border border-line bg-surface shadow-elevated"
+        data-solution-flow
+        aria-live="polite"
+      >
+        <div
+          class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(0,51,160,0.06),transparent_60%)]"
+          aria-hidden="true"
+        >
+        </div>
+
+        <div
+          class="relative flex items-center justify-between gap-3 border-b border-line px-5 py-4 sm:px-6"
+          data-solution-chrome
+        >
+          <div>
+            <p class="text-[11px] font-semibold uppercase tracking-[0.16em] text-accent">
+              With Cohi · Daily Briefing
+            </p>
+            <p
+              class="mt-1 font-display text-xl font-semibold tracking-tight text-ink"
+              data-solution-stage-label
+            >
+              {outcomes[0].stageLabel}
+            </p>
           </div>
-          <div class="h-6 w-px bg-accent/50"></div>
+          <span
+            class="inline-flex items-center gap-1.5 rounded-full bg-accent-soft px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-accent"
+            data-solution-live
+          >
+            <span class="solution-live-dot h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true"
+            ></span>
+            <span data-solution-live-text>Live</span>
+          </span>
         </div>
 
-        <div class="mx-auto max-w-md rounded-2xl border border-accent/20 bg-navy px-6 py-7 text-center shadow-elevated">
-          <p class="text-xs font-semibold uppercase tracking-[0.16em] text-white/55">Coheus</p>
-          <p class="mt-2 font-display text-2xl font-semibold text-white">Executive intelligence</p>
-          <p class="mt-2 text-sm text-white/70">Prioritized signals · clearer context · faster focus</p>
-        </div>
+        <div class="relative min-h-[26rem] px-5 py-6 sm:min-h-[28rem] sm:px-6">
+          <!-- Panel 1: From noise — badge flip -->
+          <div
+            id="solution-panel-layer"
+            role="tabpanel"
+            aria-labelledby="solution-tab-layer"
+            data-solution-panel="layer"
+            class="solution-panel absolute inset-x-5 top-6 bottom-6 sm:inset-x-6"
+          >
+            <div class="flex h-full flex-col justify-center">
+              <div class="flex items-center justify-between gap-2">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-subtle">
+                  Same lender DNA
+                </p>
+                <span
+                  class="text-[11px] font-medium text-ink-muted"
+                  data-scene-rank-hint
+                >
+                  Ranking…
+                </span>
+              </div>
 
-        <div class="relative my-6 flex justify-center" aria-hidden="true">
-          <div class="h-10 w-px bg-gradient-to-b from-accent/50 to-line-strong"></div>
-        </div>
+              <ul class="mt-4 space-y-0 divide-y divide-line border-y border-line" role="list">
+                {
+                  noiseSignals.map((signal) => (
+                    <li
+                      class="flex items-center justify-between gap-3 py-2.5"
+                      data-scene-noise={signal.id}
+                    >
+                      <div class="min-w-0">
+                        <p class="text-sm text-ink-muted">{signal.label}</p>
+                        <p
+                          class:list={[
+                            'mt-0.5 text-sm font-semibold tracking-tight',
+                            valueTone[signal.tone],
+                          ]}
+                        >
+                          {signal.value}
+                        </p>
+                      </div>
+                      <span class="grid shrink-0 justify-items-end">
+                        <span
+                          class="col-start-1 row-start-1 inline-flex whitespace-nowrap rounded-md bg-canvas px-1.5 py-0.5 text-[10px] font-semibold text-ink-subtle ring-1 ring-line"
+                          data-badge-equal
+                        >
+                          Equal
+                        </span>
+                        <span
+                          class:list={[
+                            'col-start-1 row-start-1 inline-flex whitespace-nowrap rounded-md px-1.5 py-0.5 text-[10px] font-semibold opacity-0',
+                            badgeClass[signal.tone],
+                          ]}
+                          data-badge-ranked
+                        >
+                          {signal.ranked}
+                        </span>
+                      </span>
+                    </li>
+                  ))
+                }
+              </ul>
 
-        <div class="flex justify-center">
-          <div class="rounded-xl border border-line bg-surface px-5 py-3.5 text-sm font-medium text-accent shadow-card">
-            {signals[6]}
+              <p
+                class="mt-4 text-center text-xs font-medium text-ink-subtle opacity-0"
+                data-scene-noise-note
+              >
+                Same data. Now ranked.
+              </p>
+            </div>
           </div>
+
+          <!-- Panel 2: Critical wins -->
+          <div
+            id="solution-panel-rank"
+            role="tabpanel"
+            aria-labelledby="solution-tab-rank"
+            data-solution-panel="rank"
+            class="solution-panel absolute inset-x-5 top-6 bottom-6 sm:inset-x-6"
+            hidden
+          >
+            <div class="flex h-full flex-col justify-center">
+              <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-subtle">
+                Cohi Insights · ranked
+              </p>
+
+              <ul class="mt-4 space-y-2.5" data-scene-signals>
+                {
+                  rankedSignals.map((signal) =>
+                    signal.primary ? (
+                      <li
+                        class="solution-signal rounded-xl border border-warning/25 bg-[linear-gradient(180deg,#fcf8f2_0%,#ffffff_100%)] px-4 py-4 ring-1 ring-warning/10"
+                        data-scene-signal={signal.id}
+                        data-primary="true"
+                      >
+                        <div class="flex items-center justify-between gap-2">
+                          <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-warning">
+                            {signal.cardLabel}
+                          </p>
+                          <span
+                            class:list={[
+                              'rounded-md px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.08em]',
+                              badgeClass[signal.tone],
+                            ]}
+                          >
+                            {signal.badge}
+                          </span>
+                        </div>
+                        <p class="mt-2.5 font-display text-lg font-semibold tracking-tight text-ink">
+                          {signal.title}
+                        </p>
+                        <p class="mt-1.5 text-sm leading-relaxed text-ink-muted">{signal.meta}</p>
+                      </li>
+                    ) : (
+                      <li
+                        class:list={[
+                          'solution-signal rounded-lg border px-3.5 py-2.5',
+                          signal.tone === 'success'
+                            ? 'border-success/15 bg-[#f3faf6]'
+                            : 'border-line bg-canvas/60',
+                        ]}
+                        data-scene-signal={signal.id}
+                        data-primary="false"
+                      >
+                        <div class="flex items-center justify-between gap-2">
+                          <div class="min-w-0">
+                            <p class="text-[10px] font-semibold uppercase tracking-[0.1em] text-ink-subtle">
+                              {signal.cardLabel}
+                            </p>
+                            <p class="mt-0.5 truncate text-sm font-semibold text-ink">
+                              {signal.title}
+                            </p>
+                          </div>
+                          <span
+                            class:list={[
+                              'shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold',
+                              badgeClass[signal.tone],
+                            ]}
+                          >
+                            {signal.badge}
+                          </span>
+                        </div>
+                      </li>
+                    ),
+                  )
+                }
+              </ul>
+
+              <p class="mt-3 text-center text-[11px] text-ink-subtle" data-scene-rank-more>
+                + Context & Trends · govvie mix drift
+              </p>
+            </div>
+          </div>
+
+          <!-- Panel 3: Why it matters -->
+          <div
+            id="solution-panel-context"
+            role="tabpanel"
+            aria-labelledby="solution-tab-context"
+            data-solution-panel="context"
+            class="solution-panel absolute inset-x-5 top-6 bottom-6 sm:inset-x-6"
+            hidden
+          >
+            <div class="flex h-full flex-col justify-center">
+              <div
+                class="rounded-xl border border-warning/20 bg-[linear-gradient(180deg,#fcf8f2_0%,#ffffff_100%)] px-4 py-4 ring-1 ring-warning/5"
+                data-scene-issue
+              >
+                <div class="flex items-start justify-between gap-3">
+                  <div>
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-warning">
+                      Immediate Action Required
+                    </p>
+                    <p class="mt-1.5 font-display text-lg font-semibold tracking-tight text-ink">
+                      $23M closing & fallout exposure
+                    </p>
+                  </div>
+                  <span class="shrink-0 rounded-md bg-[#f3e8d4] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-warning">
+                    Critical
+                  </span>
+                </div>
+              </div>
+
+              <div class="mt-4 space-y-2" data-scene-drivers>
+                {
+                  drivers.map((driver) => (
+                    <div
+                      class="solution-driver flex items-center gap-3 rounded-lg border border-line bg-canvas/70 px-3.5 py-2.5"
+                      data-scene-driver
+                    >
+                      <span
+                        class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent"
+                        aria-hidden="true"
+                      >
+                        <svg class="h-3 w-3" viewBox="0 0 12 12" fill="none">
+                          <path
+                            d="M2.5 6.2 L4.8 8.5 L9.5 3.5"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                      </span>
+                      <p class="text-sm text-ink-muted">{driver}</p>
+                    </div>
+                  ))
+                }
+              </div>
+
+              <p
+                class="mt-4 rounded-lg border border-accent/15 bg-accent-soft/50 px-3.5 py-3 text-sm font-medium leading-relaxed text-ink"
+                data-scene-why
+              >
+                Takeaway · $23M exposure is the morning Critical. Everything else waits.
+              </p>
+            </div>
+          </div>
+
+          <!-- Panel 4: Before coffee -->
+          <div
+            id="solution-panel-cohi"
+            role="tabpanel"
+            aria-labelledby="solution-tab-cohi"
+            data-solution-panel="cohi"
+            class="solution-panel absolute inset-x-5 top-6 bottom-6 sm:inset-x-6"
+            hidden
+          >
+            <div class="flex h-full flex-col justify-center">
+              <div
+                class="overflow-hidden rounded-xl border border-line bg-[linear-gradient(180deg,#eef2f8_0%,#ffffff_60%)] shadow-card"
+                data-scene-brief
+              >
+                <div
+                  class="flex items-center justify-between gap-2 border-b border-line px-4 py-3"
+                  data-scene-brief-header
+                >
+                  <div>
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-accent">
+                      Cohi Daily Brief
+                    </p>
+                    <p class="mt-0.5 text-[10px] text-ink-subtle">Monday 6:40am · before the first call</p>
+                  </div>
+                  <span class="rounded-full bg-accent-soft px-2 py-0.5 text-[10px] font-semibold text-accent">
+                    Live
+                  </span>
+                </div>
+
+                <div class="px-4 py-4" data-scene-takeaway>
+                  <div class="flex items-center justify-between gap-2">
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-warning">
+                      Immediate Action Required
+                    </p>
+                    <span class="rounded-md bg-[#f8efe2] px-1.5 py-0.5 text-[10px] font-semibold text-warning">
+                      Critical
+                    </span>
+                  </div>
+                  <p class="mt-2.5 text-sm font-semibold leading-snug text-ink">
+                    $23 Million Exposure of Closing Late or Falling Out.
+                  </p>
+                  <p class="mt-2 text-[11px] leading-relaxed text-ink-muted">
+                    67 loans at risk of closing late · 74 loans at risk of fallout.
+                  </p>
+                </div>
+
+                <div
+                  class="border-t border-line bg-canvas/50 px-4 py-2.5"
+                  data-scene-ask
+                >
+                  <p class="text-[10px] font-semibold uppercase tracking-[0.12em] text-accent">
+                    Ask Cohi
+                  </p>
+                  <p class="mt-1 text-[11px] text-ink-muted">
+                    Which loans are at risk of fallout this week?
+                  </p>
+                </div>
+              </div>
+
+              <div
+                class="mt-4 flex items-center gap-2.5 rounded-lg border border-success/20 bg-[#edf7f1] px-3.5 py-3"
+                data-scene-owned
+              >
+                <span
+                  class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-success text-white"
+                  aria-hidden="true"
+                >
+                  <svg class="h-3.5 w-3.5" viewBox="0 0 14 14" fill="none">
+                    <path
+                      d="M3 7.2 L5.8 10 L11 4"
+                      stroke="currentColor"
+                      stroke-width="1.6"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+                <p class="text-sm font-medium text-ink">
+                  Signals. Not Noise. · actionable before coffee
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="relative flex items-center justify-between gap-3 border-t border-line px-5 py-3.5 sm:px-6"
+        >
+          <p class="text-[11px] tracking-[0.04em] text-ink-subtle" data-solution-footer>
+            Same data. Ranked urgency. Executive answer.
+          </p>
+          <a
+            href="#how-it-works"
+            class="shrink-0 text-xs font-semibold text-accent transition-colors hover:text-accent-hover"
+          >
+            See it in action →
+          </a>
         </div>
       </div>
     </div>
   </Container>
 </section>
+
+<style>
+  .solution-tab:hover [data-tab-index] {
+    background: var(--color-accent-soft);
+    color: var(--color-accent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-accent) 25%, transparent);
+  }
+
+  .solution-tab:hover [data-tab-title] {
+    color: var(--color-ink);
+  }
+
+  .solution-tab:hover [data-tab-body] {
+    color: var(--color-ink-muted);
+  }
+
+  .solution-tab[aria-selected='true'] [data-tab-index],
+  .solution-tab[aria-selected='true']:hover [data-tab-index] {
+    background: var(--color-accent);
+    color: white;
+    box-shadow: inset 0 0 0 1px var(--color-accent);
+  }
+
+  .solution-tab[aria-selected='true'] [data-tab-title],
+  .solution-tab[aria-selected='true']:hover [data-tab-title] {
+    color: var(--color-ink);
+  }
+
+  .solution-tab[aria-selected='true'] [data-tab-body],
+  .solution-tab[aria-selected='true']:hover [data-tab-body] {
+    color: var(--color-ink-muted);
+  }
+
+  .solution-live-dot[data-playing='true'] {
+    animation: solution-pulse 1.2s ease-in-out infinite;
+  }
+
+  @keyframes solution-pulse {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.4;
+      transform: scale(0.85);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .solution-live-dot[data-playing='true'] {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  import { initSolutionSimulation } from '../scripts/solution-simulation';
+  initSolutionSimulation();
+</script>

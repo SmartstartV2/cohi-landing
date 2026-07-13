@@ -1,112 +1,70 @@
 ---
 import Container from './ui/Container.astro';
-import Card from './ui/Card.astro';
 import SectionHeading from './ui/SectionHeading.astro';
 
-const outcomes = [
+const steps = [
   {
-    title: 'See what changed',
-    body: 'Identify shifts in production, pipeline, fallout, team productivity, and business performance.',
-    tone: 'teal',
-    icon: 'pulse',
+    title: 'See what moved',
+    body: 'Surface overnight shifts across pull-through, fallout, late closings, and LO tiers—ranked Critical to Context, not buried in dashboards.',
   },
   {
-    title: 'Understand why it matters',
-    body: 'Connect performance changes to the operational, financial, and workflow signals behind them.',
-    tone: 'navy',
-    icon: 'insight',
+    title: 'Know why it moved',
+    body: 'Tie each signal to the drivers behind it—cycle time, borrower conditions, concentration risk—before the first leadership call.',
   },
   {
-    title: 'Know where to focus',
-    body: 'Prioritize the areas with the greatest impact on cost, margin, risk, and growth.',
-    tone: 'amber',
-    icon: 'focus',
-  },
-  {
-    title: 'Move faster as a leadership team',
-    body: 'Give executives, managers, and operators a shared view of what needs attention now.',
-    tone: 'green',
-    icon: 'team',
+    title: 'Lock the priority',
+    body: 'Align on the few areas with the most leverage on fallout, production, and margin—so the team leads one move, not ten debates.',
   },
 ];
-
-const toneClass: Record<string, string> = {
-  teal: 'bg-accent-soft text-accent',
-  amber: 'bg-[#f8efe2] text-warning',
-  navy: 'bg-[#e8eef4] text-navy',
-  green: 'bg-[#e7f3ec] text-success',
-};
 ---
 
-<section class="border-b border-line bg-surface py-20 sm:py-24">
+<section id="outcomes" class="scroll-mt-20 bg-surface py-20 sm:py-24">
   <Container>
-    <SectionHeading title="Lead with clarity. Act with confidence." />
+    <SectionHeading
+      title="Signals. Not Noise."
+      description="Cohi converts your lender DNA and production data into a shared morning loop: detect the shift, understand the driver, and lock the priority leadership should decide on."
+    />
 
-    <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:gap-5">
-      {
-        outcomes.map((item, i) => (
-          <Card class="h-full" data-reveal>
-            <div class="flex items-start justify-between gap-3">
+    <div class="outcomes-loop relative mt-12 lg:mt-14" data-outcomes-loop>
+      <div
+        class="pointer-events-none absolute left-[11px] top-3 bottom-3 w-px bg-line lg:left-[0.75rem] lg:right-[calc(33.333%-0.75rem)] lg:top-[0.75rem] lg:bottom-auto lg:h-px lg:w-auto"
+        aria-hidden="true"
+      >
+      </div>
+      <div
+        class="pointer-events-none absolute left-[11px] top-3 bottom-3 w-px origin-top scale-y-0 bg-accent lg:left-[0.75rem] lg:right-[calc(33.333%-0.75rem)] lg:top-[0.75rem] lg:bottom-auto lg:h-px lg:w-auto lg:origin-left lg:scale-x-0 lg:scale-y-100"
+        data-outcomes-progress
+        aria-hidden="true"
+      >
+      </div>
+
+      <ol class="relative m-0 grid list-none gap-10 p-0 lg:grid-cols-3 lg:gap-8 xl:gap-10">
+        {
+          steps.map((item, i) => (
+            <li class="relative flex gap-4 lg:flex-col lg:gap-0" data-outcomes-step>
               <span
-                class:list={[
-                  'flex h-9 w-9 items-center justify-center rounded-xl',
-                  toneClass[item.tone],
-                ]}
-                aria-hidden="true"
+                class="relative z-10 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-accent/25 bg-surface text-[11px] font-semibold tracking-wide text-accent lg:mb-5"
               >
-                {item.icon === 'pulse' && (
-                  <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none">
-                    <path
-                      d="M2 10 L5 6.5 L7.5 9 L14 3"
-                      stroke="currentColor"
-                      stroke-width="1.6"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                )}
-                {item.icon === 'insight' && (
-                  <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none">
-                    <circle cx="8" cy="8" r="2.4" stroke="currentColor" stroke-width="1.5" />
-                    <path
-                      d="M8 2 V3.4 M8 12.6 V14 M2 8 H3.4 M12.6 8 H14 M3.8 3.8 L4.8 4.8 M11.2 11.2 L12.2 12.2 M12.2 3.8 L11.2 4.8 M4.8 11.2 L3.8 12.2"
-                      stroke="currentColor"
-                      stroke-width="1.4"
-                      stroke-linecap="round"
-                    />
-                  </svg>
-                )}
-                {item.icon === 'focus' && (
-                  <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none">
-                    <circle cx="8" cy="8" r="5" stroke="currentColor" stroke-width="1.5" />
-                    <circle cx="8" cy="8" r="1.6" fill="currentColor" />
-                  </svg>
-                )}
-                {item.icon === 'team' && (
-                  <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none">
-                    <path
-                      d="M5.5 7 A2 2 0 1 0 5.5 3 A2 2 0 0 0 5.5 7 Z M10.5 7 A2 2 0 1 0 10.5 3 A2 2 0 0 0 10.5 7 Z"
-                      stroke="currentColor"
-                      stroke-width="1.4"
-                    />
-                    <path
-                      d="M2.5 13 C2.5 11.2 3.8 10 5.5 10 C6.4 10 7.2 10.3 7.8 10.9 M8.2 10.9 C8.8 10.3 9.6 10 10.5 10 C12.2 10 13.5 11.2 13.5 13"
-                      stroke="currentColor"
-                      stroke-width="1.4"
-                      stroke-linecap="round"
-                    />
-                  </svg>
-                )}
-              </span>
-              <p class="text-xs font-semibold tracking-[0.14em] text-ink-subtle">
                 {String(i + 1).padStart(2, '0')}
-              </p>
-            </div>
-            <h3 class="mt-4 text-lg font-semibold tracking-tight text-ink">{item.title}</h3>
-            <p class="mt-2 text-sm leading-relaxed text-ink-muted sm:text-base">{item.body}</p>
-          </Card>
-        ))
-      }
+              </span>
+              <div class="min-w-0 pt-0.5 lg:pt-0">
+                <h3 class="font-display text-xl font-semibold tracking-tight text-ink sm:text-[1.35rem]">
+                  {item.title}
+                </h3>
+                <p class="mt-2 text-sm leading-relaxed text-ink-muted sm:text-[15px]">{item.body}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
     </div>
+
+    <p
+      class="mt-10 max-w-2xl border-l-2 border-accent/35 pl-4 text-sm leading-relaxed text-ink-muted sm:mt-12 sm:text-base"
+      data-reveal
+    >
+      <span class="font-semibold text-ink">Act from one brief.</span>
+      Executives, managers, and operators share the same ranked signals—so debate ends and decisions start.
+    </p>
   </Container>
 </section>

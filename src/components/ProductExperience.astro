@@ -1,60 +1,80 @@
 ---
 import Container from './ui/Container.astro';
-import Card from './ui/Card.astro';
 import SectionHeading from './ui/SectionHeading.astro';
 
-const products = [
+const primary = [
   {
-    title: 'Executive Center',
-    body: 'A command center for leadership visibility, priorities, KPIs, and business signals.',
+    role: 'Brief',
+    title: 'Cohi Insights',
+    body: 'Daily briefings ranked Critical, Needs Attention, What’s Working, and Context—signals before coffee.',
   },
   {
-    title: 'Mortgage Intelligence',
-    body: 'Track production, pipeline movement, fallout, profitability, productivity, cost per loan, and operational performance.',
+    role: 'Measure',
+    title: 'Fallout & Pull-Through',
+    body: 'Closings at risk, fallout forecast, and pipeline conversion visibility so leaders intervene early.',
   },
   {
-    title: 'Cohi Research Lab',
-    body: 'Explore deeper questions, investigate business issues, and turn lender data into strategic insight.',
+    role: 'Coach',
+    title: 'TopTiering®',
+    body: 'Rank and coach loan officer performance against your lending DNA—who carries the load, who needs support.',
+  },
+];
+
+const secondary = [
+  {
+    title: 'Ask Cohi',
+    body: 'Natural-language questions with evidence from your production context and org knowledge.',
   },
   {
-    title: 'Sales & Relationship Intelligence',
-    body: 'Understand customer, referral, and sales activity with clearer performance visibility.',
-  },
-  {
-    title: 'Operations & Productivity',
-    body: 'See where work slows down, where teams need help, and where friction is affecting outcomes.',
-  },
-  {
-    title: 'Integrations',
-    body: 'Connect with the systems your organization already depends on.',
+    title: 'HMDA DataBank',
+    body: 'Market and peer intelligence—lender search, geography, fallout, and competitive position.',
   },
 ];
 ---
 
-<section id="platform" class="scroll-mt-20 border-b border-line bg-surface py-20 sm:py-24">
+<section id="platform" class="scroll-mt-20 bg-surface py-20 sm:py-24">
   <Container>
-    <SectionHeading title="One intelligent workspace for mortgage leadership." />
+    <SectionHeading
+      title="One platform. Every leadership lens."
+      description="From Cohi Insights out—daily briefs, fallout intelligence, TopTiering®, and the market views mortgage leaders actually use."
+    />
 
-    <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
+    <ul class="mt-12 grid list-none gap-10 p-0 m-0 lg:grid-cols-3 lg:gap-8 xl:gap-10">
       {
-        products.map((item) => (
-          <Card class="h-full" data-reveal>
-            <div
-              class="mb-4 flex h-9 w-9 items-center justify-center rounded-lg bg-accent-soft text-accent"
-              aria-hidden="true"
-            >
-              <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none">
-                <rect x="2" y="2" width="5" height="5" rx="1.2" fill="currentColor" opacity="0.9" />
-                <rect x="9" y="2" width="5" height="5" rx="1.2" fill="currentColor" opacity="0.45" />
-                <rect x="2" y="9" width="5" height="5" rx="1.2" fill="currentColor" opacity="0.45" />
-                <rect x="9" y="9" width="5" height="5" rx="1.2" fill="currentColor" opacity="0.7" />
-              </svg>
-            </div>
-            <h3 class="text-lg font-semibold tracking-tight text-ink">{item.title}</h3>
-            <p class="mt-2 text-sm leading-relaxed text-ink-muted">{item.body}</p>
-          </Card>
+        primary.map((item) => (
+          <li class="relative" data-reveal>
+            <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-accent">
+              {item.role}
+            </p>
+            <h3 class="mt-3 font-display text-xl font-semibold tracking-tight text-ink sm:text-[1.35rem]">
+              {item.title}
+            </h3>
+            <p class="mt-2 text-sm leading-relaxed text-ink-muted sm:text-[15px]">{item.body}</p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div
+      class="mt-12 grid gap-8 border-t border-line pt-10 sm:grid-cols-2 sm:gap-10"
+      data-reveal
+    >
+      {
+        secondary.map((item) => (
+          <div>
+            <h3 class="text-base font-semibold tracking-tight text-ink">{item.title}</h3>
+            <p class="mt-1.5 text-sm leading-relaxed text-ink-muted">{item.body}</p>
+          </div>
         ))
       }
     </div>
+
+    <p
+      class="mt-10 max-w-2xl border-l-2 border-accent/35 pl-4 text-sm leading-relaxed text-ink-muted sm:mt-12 sm:text-base"
+      data-reveal
+    >
+      <span class="font-semibold text-ink">Integrations.</span>
+      Works with the production and market data lenders already run—without silent warehouse sync into model training.
+    </p>
   </Container>
 </section>

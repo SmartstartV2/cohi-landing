@@ -1,37 +1,44 @@
 ---
 import Container from './ui/Container.astro';
+import Button from './ui/Button.astro';
 ---
 
 <section
   id="demo"
-  class="scroll-mt-20 border-b border-line bg-navy py-20 text-white sm:py-24"
+  class="relative scroll-mt-20 overflow-hidden bg-[linear-gradient(165deg,#e8eef8_0%,#eef2f8_45%,#f4f6fa_100%)] py-20 text-ink sm:py-24"
   aria-labelledby="final-cta-heading"
 >
-  <Container>
+  <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+    <div
+      class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(0,51,160,0.12),transparent_58%),radial-gradient(ellipse_40%_40%_at_90%_80%,rgba(0,166,81,0.06),transparent_55%)]"
+    >
+    </div>
+    <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/25 to-transparent">
+    </div>
+    <div
+      class="absolute inset-0 opacity-[0.22] [background-image:linear-gradient(rgba(0,51,160,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(0,51,160,0.04)_1px,transparent_1px)] [background-size:56px_56px] [mask-image:radial-gradient(ellipse_70%_55%_at_50%_20%,black,transparent)]"
+    >
+    </div>
+  </div>
+
+  <Container class="relative">
     <div class="mx-auto max-w-3xl text-center" data-reveal>
+      <p class="text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-accent">
+        Get started
+      </p>
       <h2
         id="final-cta-heading"
-        class="font-display text-3xl font-semibold tracking-tight text-balance sm:text-4xl lg:text-5xl"
+        class="mt-4 font-display text-3xl font-semibold tracking-tight text-ink text-balance sm:text-4xl lg:text-5xl"
       >
-        Turn mortgage data into executive clarity.
+        Turn lender DNA into executive clarity.
       </h2>
-      <p class="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-white/70 sm:text-lg">
-        See how Coheus helps leadership teams identify what matters, understand what is changing,
-        and make faster decisions from one intelligent workspace.
+      <p class="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-ink-muted sm:text-lg">
+        See how Cohi ranks Critical signals, explains fallout and production drivers, and helps
+        mortgage leadership act from one morning brief.
       </p>
       <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
-        <a
-          href="#demo"
-          class="inline-flex items-center justify-center rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-navy transition-colors hover:bg-canvas focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-        >
-          Test Drive
-        </a>
-        <a
-          href="#contact"
-          class="inline-flex items-center justify-center rounded-lg border border-white/25 bg-transparent px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:border-white/50 hover:bg-white/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-        >
-          Contact Us
-        </a>
+        <Button href="#demo" class="min-w-[10.5rem] shadow-card">Test Drive</Button>
+        <Button href="#contact" variant="secondary" class="min-w-[10.5rem]">Contact Us</Button>
       </div>
     </div>
   </Container>

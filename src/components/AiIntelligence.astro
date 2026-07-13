@@ -4,32 +4,33 @@ import SectionHeading from './ui/SectionHeading.astro';
 
 const demos = [
   {
-    id: 'cost',
-    question: 'Why did cost per loan increase this month?',
-    summary: 'Cost per loan rose 8% MoM, led by origination cycle time and rework.',
+    id: 'fallout',
+    question: 'Which loans are at risk of fallout this week?',
+    summary:
+      'Immediate action: $23M exposure — 67 loans late to close and 74 at fallout risk.',
     metrics: [
       {
-        label: 'Cost / loan',
-        value: '$412',
-        delta: '+8%',
+        label: 'Exposure',
+        value: '$23M',
+        delta: 'Critical',
         spark: {
           type: 'area' as const,
           values: [34, 30, 26, 28, 22, 24, 20, 32, 40, 36, 44, 52, 48, 58, 62],
         },
       },
       {
-        label: 'Cycle time',
-        value: '4.2d',
-        delta: '+0.7d',
+        label: 'Late closings',
+        value: '67',
+        delta: 'At risk',
         spark: {
           type: 'area' as const,
           values: [28, 30, 27, 32, 29, 35, 33, 38, 36, 42, 40, 46, 44, 50, 54],
         },
       },
       {
-        label: 'Rework',
-        value: '18%',
-        delta: '+3pts',
+        label: 'Fallout risk',
+        value: '74',
+        delta: 'Watch',
         spark: {
           type: 'area' as const,
           values: [22, 24, 20, 26, 30, 28, 34, 32, 38, 36, 42, 40, 46, 48, 52],
@@ -37,18 +38,33 @@ const demos = [
       },
     ],
     bullets: [
-      'Branches 07 and 14 driving cycle-time delay',
-      'Condition rework up 22% month over month',
-      'West pull-through soft spots amplifying unit cost',
+      'West pull-through soft spots amplifying late closings',
+      'Delayed borrower conditions adding cycle time',
+      'Intervene before the week slips into forecast risk',
     ],
   },
   {
-    id: 'fallout',
-    question: 'Which branches are showing early signs of fallout risk?',
+    id: 'toptier',
+    question: 'Who is in the bottom tier of production?',
   },
   {
     id: 'focus',
-    question: 'Where should leadership focus today?',
+    question: 'Where should leadership focus before coffee?',
+  },
+];
+
+const capabilities = [
+  {
+    title: 'Ask in business language',
+    body: 'Pose the question a CEO or COO would ask—without waiting on another report cycle.',
+  },
+  {
+    title: 'Investigate what changed',
+    body: 'Cohi surfaces the drivers behind fallout, pull-through, and LO performance with your lender DNA.',
+  },
+  {
+    title: 'Answer with evidence',
+    body: 'Get executive-ready explanations tied to metrics and contributing signals—not another static chart.',
   },
 ];
 
@@ -80,170 +96,185 @@ const initialMetrics = initial.metrics.map((metric, index) => {
 
 <section
   id="ai-intelligence"
-  class="scroll-mt-20 border-b border-line bg-canvas py-20 sm:py-24"
+  class="scroll-mt-20 bg-canvas py-20 sm:py-24"
 >
   <Container>
-    <SectionHeading
-      title="Ask better questions. Get executive-ready answers."
-      description="Coheus helps leaders move beyond static reporting. With Cohi, leadership teams can ask direct business questions, investigate performance issues, and receive clear explanations based on connected lender data."
-    />
+    <div class="grid items-start gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
+      <div class="lg:sticky lg:top-28">
+        <SectionHeading
+          title="Ask better questions. Get executive-ready answers."
+          description="With Cohi, leadership teams ask direct mortgage questions, investigate fallout and production issues, and get clear explanations grounded in lender DNA—not another static report."
+        />
 
-    <div
-      class="cohi-demo mx-auto mt-12 max-w-3xl"
-      data-cohi-demo
-      data-active="cost"
-      data-evidence="shown"
-      data-reveal
-    >
-      <div class="rounded-2xl border border-line bg-surface p-4 shadow-elevated sm:p-6">
-        <div class="flex items-center gap-2.5 border-b border-line pb-4">
-          <span
-            class="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-soft text-accent"
-            aria-hidden="true"
-          >
-            <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none">
-              <circle cx="8" cy="8" r="2.4" stroke="currentColor" stroke-width="1.5"></circle>
-              <path
-                d="M8 2 V3.4 M8 12.6 V14 M2 8 H3.4 M12.6 8 H14"
-                stroke="currentColor"
-                stroke-width="1.4"
-                stroke-linecap="round"></path>
-            </svg>
-          </span>
-          <div>
-            <p class="text-sm font-semibold text-ink">Ask Cohi</p>
-            <p class="text-[11px] text-ink-subtle">Executive Q&amp;A on connected lender signals</p>
-          </div>
-        </div>
+        <ul class="mt-10 space-y-6">
+          {
+            capabilities.map((item) => (
+              <li class="border-l-2 border-accent/35 pl-4" data-reveal>
+                <p class="text-sm font-semibold tracking-tight text-ink">{item.title}</p>
+                <p class="mt-1 text-sm leading-relaxed text-ink-muted">{item.body}</p>
+              </li>
+            ))
+          }
+        </ul>
 
-        <div class="mt-5 space-y-3">
-          <div class="rounded-xl border border-line bg-canvas px-4 py-3">
-            <p class="text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-subtle">You ask</p>
-            <p
-              class="mt-1.5 min-h-[1.35rem] text-sm font-medium leading-snug text-ink"
-              data-cohi-question
+        <p class="mt-10 text-sm font-medium text-ink-muted" data-reveal>
+          Cohi is most valuable when it understands the business context.
+        </p>
+      </div>
+
+      <div
+        class="cohi-demo"
+        data-cohi-demo
+        data-active="fallout"
+        data-evidence="shown"
+        data-reveal
+      >
+        <div class="rounded-2xl border border-line bg-surface p-4 shadow-elevated sm:p-6">
+          <div class="flex items-center gap-2.5 border-b border-line pb-4">
+            <span
+              class="flex h-9 w-9 items-center justify-center rounded-xl bg-accent-soft text-accent"
+              aria-hidden="true"
             >
-              <span data-cohi-question-text>{initial.question}</span><span
-                class="cohi-caret"
-                data-cohi-caret
-                aria-hidden="true"></span>
-            </p>
+              <svg class="h-4 w-4" viewBox="0 0 16 16" fill="none">
+                <circle cx="8" cy="8" r="2.4" stroke="currentColor" stroke-width="1.5"></circle>
+                <path
+                  d="M8 2 V3.4 M8 12.6 V14 M2 8 H3.4 M12.6 8 H14"
+                  stroke="currentColor"
+                  stroke-width="1.4"
+                  stroke-linecap="round"></path>
+              </svg>
+            </span>
+            <div>
+              <p class="text-sm font-semibold text-ink">Ask Cohi</p>
+              <p class="text-[11px] text-ink-subtle">Executive Q&amp;A on connected lender signals</p>
+            </div>
           </div>
 
-          <div
-            class="rounded-xl border border-line bg-[linear-gradient(180deg,#f7fbfa_0%,#ffffff_55%)] px-4 py-4 shadow-card ring-1 ring-accent/5"
-            data-cohi-answer-panel
-          >
-            <div class="flex items-center gap-2">
-              <span
-                class="cohi-status-dot h-1.5 w-1.5 rounded-full bg-accent"
-                data-cohi-status-dot
-                aria-hidden="true"></span>
+          <div class="mt-5 space-y-3">
+            <div class="rounded-xl border border-line bg-canvas px-4 py-3">
+              <p class="text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-subtle">You ask</p>
               <p
-                class="text-[10px] font-semibold uppercase tracking-[0.12em] text-accent"
-                data-cohi-status-label
+                class="mt-1.5 min-h-[1.35rem] text-sm font-medium leading-snug text-ink"
+                data-cohi-question
               >
-                Cohi answers
+                <span data-cohi-question-text>{initial.question}</span><span
+                  class="cohi-caret"
+                  data-cohi-caret
+                  aria-hidden="true"></span>
               </p>
             </div>
 
-            <div class="relative mt-2.5 min-h-[10rem]" data-cohi-body-wrap>
-              <p
-                class="cohi-thinking absolute inset-0 text-sm leading-relaxed text-ink-subtle"
-                data-cohi-thinking
-                hidden
-                aria-hidden="true"
-              >
-                Analyzing lender signals…
-              </p>
-
-              <div data-cohi-body>
+            <div
+              class="rounded-xl border border-line bg-[linear-gradient(180deg,#f4f6fa_0%,#ffffff_55%)] px-4 py-4 shadow-card ring-1 ring-accent/5"
+              data-cohi-answer-panel
+            >
+              <div class="flex items-center gap-2">
+                <span
+                  class="cohi-status-dot h-1.5 w-1.5 rounded-full bg-accent"
+                  data-cohi-status-dot
+                  aria-hidden="true"></span>
                 <p
-                  class="cohi-summary text-sm leading-relaxed text-ink sm:text-[15px]"
-                  data-cohi-answer
-                  aria-live="polite"
+                  class="text-[10px] font-semibold uppercase tracking-[0.12em] text-accent"
+                  data-cohi-status-label
                 >
-                  {initial.summary}
+                  Cohi answers
+                </p>
+              </div>
+
+              <div class="relative mt-2.5 min-h-[10rem]" data-cohi-body-wrap>
+                <p
+                  class="cohi-thinking absolute inset-0 text-sm leading-relaxed text-ink-subtle"
+                  data-cohi-thinking
+                  hidden
+                  aria-hidden="true"
+                >
+                  Analyzing lender signals…
                 </p>
 
-                <div
-                  class="cohi-metrics mt-3 grid grid-cols-3 gap-2"
-                  data-cohi-metrics
-                >
-                  {
-                    initialMetrics.map((metric) => (
-                      <div class="cohi-metric flex items-center gap-2 rounded-lg border border-line bg-surface px-2.5 py-2 shadow-card">
-                        <div class="min-w-0 flex-1">
-                          <p class="text-[10px] font-medium text-ink-subtle">{metric.label}</p>
-                          <p class="mt-0.5 text-sm font-semibold text-ink">{metric.value}</p>
-                          <p class="mt-0.5 text-[10px] font-medium text-warning">{metric.delta}</p>
-                        </div>
-                        <div class="cohi-kpi-spark-wrap shrink-0" aria-hidden="true">
-                          <svg
-                            class="cohi-kpi-spark"
-                            viewBox={`0 0 ${SPARK_W} ${SPARK_H}`}
-                            width={SPARK_W}
-                            height={SPARK_H}
-                          >
-                            <defs>
-                              <linearGradient id={metric.gradId} x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="#1a7a88" stop-opacity="0.35" />
-                                <stop offset="100%" stop-color="#1a7a88" stop-opacity="0" />
-                              </linearGradient>
-                            </defs>
-                            <path class="cohi-kpi-area" d={metric.area} fill={`url(#${metric.gradId})`}
-                            ></path>
-                            <path
-                              class="cohi-kpi-area-line"
-                              d={metric.line}
-                              fill="none"
-                              stroke="#0f5f6b"
-                              stroke-width="1.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"></path>
-                          </svg>
-                        </div>
-                      </div>
-                    ))
-                  }
-                </div>
+                <div data-cohi-body>
+                  <p
+                    class="cohi-summary text-sm leading-relaxed text-ink sm:text-[15px]"
+                    data-cohi-answer
+                    aria-live="polite"
+                  >
+                    {initial.summary}
+                  </p>
 
-                <ul class="cohi-bullets mt-3 space-y-1.5" data-cohi-bullets>
-                  {
-                    initial.bullets.map((bullet) => (
-                      <li class="cohi-bullet flex gap-2 text-xs leading-snug text-ink-muted sm:text-[13px]">
-                        <span class="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-accent" aria-hidden="true"
-                        ></span>
-                        <span>{bullet}</span>
-                      </li>
-                    ))
-                  }
-                </ul>
+                  <div
+                    class="cohi-metrics mt-3 grid grid-cols-1 gap-2 min-[420px]:grid-cols-3"
+                    data-cohi-metrics
+                  >
+                    {
+                      initialMetrics.map((metric) => (
+                        <div class="cohi-metric flex items-center gap-2 rounded-lg border border-line bg-surface px-2.5 py-2 shadow-card">
+                          <div class="min-w-0 flex-1">
+                            <p class="text-[10px] font-medium text-ink-subtle">{metric.label}</p>
+                            <p class="mt-0.5 text-sm font-semibold text-ink">{metric.value}</p>
+                            <p class="mt-0.5 text-[10px] font-medium text-warning">{metric.delta}</p>
+                          </div>
+                          <div class="cohi-kpi-spark-wrap shrink-0" aria-hidden="true">
+                            <svg
+                              class="cohi-kpi-spark"
+                              viewBox={`0 0 ${SPARK_W} ${SPARK_H}`}
+                              width={SPARK_W}
+                              height={SPARK_H}
+                            >
+                              <defs>
+                                <linearGradient id={metric.gradId} x1="0" y1="0" x2="0" y2="1">
+                                  <stop offset="0%" stop-color="#3366b3" stop-opacity="0.35" />
+                                  <stop offset="100%" stop-color="#3366b3" stop-opacity="0" />
+                                </linearGradient>
+                              </defs>
+                              <path class="cohi-kpi-area" d={metric.area} fill={`url(#${metric.gradId})`}
+                              ></path>
+                              <path
+                                class="cohi-kpi-area-line"
+                                d={metric.line}
+                                fill="none"
+                                stroke="#0033a0"
+                                stroke-width="1.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"></path>
+                            </svg>
+                          </div>
+                        </div>
+                      ))
+                    }
+                  </div>
+
+                  <ul class="cohi-bullets mt-3 space-y-1.5" data-cohi-bullets>
+                    {
+                      initial.bullets.map((bullet) => (
+                        <li class="cohi-bullet flex gap-2 text-xs leading-snug text-ink-muted sm:text-[13px]">
+                          <span class="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-accent" aria-hidden="true"
+                          ></span>
+                          <span>{bullet}</span>
+                        </li>
+                      ))
+                    }
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="mt-5 flex flex-wrap gap-2" role="tablist" aria-label="Sample Cohi questions">
-          {
-            demos.map((demo) => (
-              <button
-                type="button"
-                class="cohi-chip rounded-full border border-line bg-canvas px-3 py-1.5 text-left text-[11px] font-medium text-ink-muted transition-colors sm:text-xs"
-                data-cohi-chip={demo.id}
-                aria-pressed={demo.id === 'cost' ? 'true' : 'false'}
-              >
-                {demo.question}
-              </button>
-            ))
-          }
+          <div class="mt-5 flex flex-col gap-2" role="tablist" aria-label="Sample Cohi questions">
+            {
+              demos.map((demo) => (
+                <button
+                  type="button"
+                  class="cohi-chip rounded-xl border border-line bg-canvas px-3.5 py-2.5 text-left text-[11px] font-medium text-ink-muted transition-colors sm:text-xs"
+                  data-cohi-chip={demo.id}
+                  aria-pressed={demo.id === 'fallout' ? 'true' : 'false'}
+                >
+                  {demo.question}
+                </button>
+              ))
+            }
+          </div>
         </div>
       </div>
     </div>
-
-    <p class="mt-10 text-center text-sm font-medium text-ink-muted" data-reveal>
-      Cohi is most valuable when it understands the business context.
-    </p>
   </Container>
 </section>
 
@@ -324,7 +355,7 @@ const initialMetrics = initial.metrics.map((metric, index) => {
 
   :global(.cohi-kpi-area-line) {
     fill: none;
-    stroke: #0f5f6b;
+    stroke: #0033a0;
     stroke-width: 1.5;
     stroke-linecap: round;
     stroke-linejoin: round;

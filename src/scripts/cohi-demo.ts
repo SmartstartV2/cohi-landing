@@ -18,32 +18,33 @@ type Demo = {
 };
 
 const demos: Record<string, Demo> = {
-  cost: {
-    question: 'Why did cost per loan increase this month?',
-    summary: 'Cost per loan rose 8% MoM, led by origination cycle time and rework.',
+  fallout: {
+    question: 'Which loans are at risk of fallout this week?',
+    summary:
+      'Immediate action: $23M exposure — 67 loans late to close and 74 at fallout risk.',
     metrics: [
       {
-        label: 'Cost / loan',
-        value: '$412',
-        delta: '+8%',
+        label: 'Exposure',
+        value: '$23M',
+        delta: 'Critical',
         spark: {
           type: 'area',
           values: [34, 30, 26, 28, 22, 24, 20, 32, 40, 36, 44, 52, 48, 58, 62],
         },
       },
       {
-        label: 'Cycle time',
-        value: '4.2d',
-        delta: '+0.7d',
+        label: 'Late closings',
+        value: '67',
+        delta: 'At risk',
         spark: {
           type: 'area',
           values: [28, 30, 27, 32, 29, 35, 33, 38, 36, 42, 40, 46, 44, 50, 54],
         },
       },
       {
-        label: 'Rework',
-        value: '18%',
-        delta: '+3pts',
+        label: 'Fallout risk',
+        value: '74',
+        delta: 'Watch',
         spark: {
           type: 'area',
           values: [22, 24, 20, 26, 30, 28, 34, 32, 38, 36, 42, 40, 46, 48, 52],
@@ -51,37 +52,38 @@ const demos: Record<string, Demo> = {
       },
     ],
     bullets: [
-      'Branches 07 and 14 driving cycle-time delay',
-      'Condition rework up 22% month over month',
-      'West pull-through soft spots amplifying unit cost',
+      'West pull-through soft spots amplifying late closings',
+      'Delayed borrower conditions adding cycle time',
+      'Intervene before the week slips into forecast risk',
     ],
   },
-  fallout: {
-    question: 'Which branches are showing early signs of fallout risk?',
-    summary: 'West Region branches 12 and 18 are elevating first — ahead of peer average.',
+  toptier: {
+    question: 'Who is in the bottom tier of production?',
+    summary:
+      '35% of originators have fewer than one application by mid-month — 23 LOs sit in the bottom tier.',
     metrics: [
       {
-        label: 'Branch 12',
-        value: '14%',
-        delta: 'Elevated',
+        label: 'Bottom tier',
+        value: '23 LOs',
+        delta: 'Needs Attention',
         spark: {
           type: 'bars',
           values: [28, 36, 22, 48, 18, 72, 40, 34, 52, 30, 58, 26, 20, 44, 32, 38, 24, 46, 30, 42],
         },
       },
       {
-        label: 'Branch 18',
-        value: '11%',
-        delta: 'Watch',
+        label: '<1 app',
+        value: '35%',
+        delta: 'By the 15th',
         spark: {
           type: 'bars',
           values: [24, 30, 20, 42, 26, 55, 34, 28, 46, 22, 50, 32, 18, 38, 28, 36, 24, 40, 30, 34],
         },
       },
       {
-        label: 'Peer avg',
-        value: '6%',
-        delta: 'Baseline',
+        label: 'Top tier',
+        value: '7 LOs',
+        delta: 'Carrying load',
         spark: {
           type: 'bars',
           values: [18, 22, 16, 28, 14, 32, 20, 24, 26, 18, 30, 16, 12, 22, 18, 24, 14, 26, 20, 22],
@@ -89,37 +91,37 @@ const demos: Record<string, Demo> = {
       },
     ],
     bullets: [
-      'Delayed borrower conditions adding 1.8 days',
-      'Processor capacity lagging lock volume',
-      'Condition turnaround slipping week over week',
+      'Revenue concentration risk across a small Top Tier',
+      'Bottom-tier stall is visible early enough to coach',
+      'TopTiering® ranking clarifies who needs support this week',
     ],
   },
   focus: {
-    question: 'Where should leadership focus today?',
-    summary: 'Prioritize West fallout first, then origination cost and pricing margin.',
+    question: 'Where should leadership focus before coffee?',
+    summary: 'Prioritize Critical fallout exposure first, then bottom-tier production and govvie mix.',
     metrics: [
       {
-        label: 'P1 focus',
+        label: 'Critical',
         value: 'Fallout',
-        delta: 'West',
+        delta: '$23M',
         spark: {
           type: 'bars',
           values: [30, 38, 24, 50, 20, 68, 42, 36, 54, 28, 60, 32, 22, 46, 34, 40, 26, 48, 32, 44],
         },
       },
       {
-        label: 'P2 watch',
-        value: 'CPL',
-        delta: '+8%',
+        label: 'Needs Attention',
+        value: 'LO tiers',
+        delta: '23 LOs',
         spark: {
           type: 'area',
           values: [32, 28, 24, 26, 22, 30, 36, 34, 42, 40, 48, 46, 54, 52, 60],
         },
       },
       {
-        label: 'P3 watch',
-        value: 'Margin',
-        delta: 'Leakage',
+        label: 'Context',
+        value: 'Govvie',
+        delta: '−12%',
         spark: {
           type: 'area',
           values: [58, 54, 50, 52, 46, 44, 48, 40, 38, 42, 36, 34, 38, 30, 28],
@@ -127,14 +129,14 @@ const demos: Record<string, Demo> = {
       },
     ],
     bullets: [
-      'Assign owner to West Region fallout drivers today',
-      'Review cycle-time outliers in branches 07 and 14',
-      'Check pricing desk margin leakage before week close',
+      'Assign CLO ownership to late closings and fallout-risk loans',
+      'Coach bottom-tier originators before month-end volume slips',
+      'Review govvie mix drift against company target',
     ],
   },
 };
 
-const demoOrder = ['cost', 'fallout', 'focus'] as const;
+const demoOrder = ['fallout', 'toptier', 'focus'] as const;
 
 const QUESTION_MS = 40;
 const SUMMARY_MS = 14;
@@ -225,12 +227,12 @@ function renderSparkSvg(spark: MetricSpark, id: string) {
     <svg class="cohi-kpi-spark" viewBox="0 0 ${SPARK_W} ${SPARK_H}" width="${SPARK_W}" height="${SPARK_H}" aria-hidden="true">
       <defs>
         <linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#1a7a88" stop-opacity="0.35" />
-          <stop offset="100%" stop-color="#1a7a88" stop-opacity="0" />
+          <stop offset="0%" stop-color="#3366b3" stop-opacity="0.35" />
+          <stop offset="100%" stop-color="#3366b3" stop-opacity="0" />
         </linearGradient>
       </defs>
       <path class="cohi-kpi-area" d="${area}" fill="url(#${gradId})" />
-      <path class="cohi-kpi-area-line" d="${line}" fill="none" stroke="#0f5f6b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+      <path class="cohi-kpi-area-line" d="${line}" fill="none" stroke="#0033a0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
     </svg>`;
 }
 

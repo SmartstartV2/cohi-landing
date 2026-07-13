@@ -1,71 +1,131 @@
 ---
 import Container from './ui/Container.astro';
-import SectionHeading from './ui/SectionHeading.astro';
 
 const sources = [
-  'Production',
-  'Pipeline',
-  'Operations',
-  'Profitability',
-  'Risk',
-  'Productivity',
+  'Pull-Through',
+  'Fallout',
+  'Closings',
+  'LO Production',
+  'Margin',
+  'Market Rates',
 ];
+
+const SPARK_W = 56;
+const SPARK_H = 22;
+
+function areaPaths(values: number[], width: number, height: number) {
+  const max = Math.max(...values);
+  const min = Math.min(...values);
+  const range = Math.max(max - min, 1);
+  const coords = values.map((value, index) => {
+    const x = (index / (values.length - 1)) * width;
+    const y = height - ((value - min) / range) * (height - 3) - 1.5;
+    return { x, y };
+  });
+  const line = coords
+    .map((point, index) => `${index === 0 ? 'M' : 'L'}${point.x.toFixed(1)} ${point.y.toFixed(1)}`)
+    .join(' ');
+  const area = `${line} L${width} ${height} L0 ${height} Z`;
+  return { line, area };
+}
+
+function barRects(values: number[], width: number, height: number) {
+  const count = values.length;
+  const gap = 0.9;
+  const barW = (width - gap * (count - 1)) / count;
+  const max = Math.max(...values, 1);
+  return values.map((value, index) => {
+    const h = Math.max((value / max) * height, 2);
+    return {
+      x: index * (barW + gap),
+      y: height - h,
+      w: barW,
+      h,
+    };
+  });
+}
 
 const pulseMetrics = [
   {
     key: 'pipeline',
-    label: 'Pipeline Health',
-    idle: 'Stable',
+    label: 'Pull-Through',
+    idleValue: '72%',
+    idleStatus: 'On track',
     tone: 'teal',
     icon: 'pipeline',
+    sparkType: 'area' as const,
+    spark: [40, 42, 41, 43, 44, 45, 44, 46, 47, 48],
   },
   {
     key: 'fallout',
     label: 'Fallout Risk',
-    idle: 'Clear',
+    idleValue: '$0',
+    idleStatus: 'Clear',
     tone: 'amber',
     icon: 'risk',
+    sparkType: 'area' as const,
+    spark: [12, 14, 13, 15, 14, 16, 15, 14, 13, 12],
   },
   {
     key: 'cost',
-    label: 'Cost Per Loan',
-    idle: 'Steady',
+    label: 'Late Closings',
+    idleValue: '12',
+    idleStatus: 'Steady',
     tone: 'navy',
     icon: 'cost',
+    sparkType: 'bars' as const,
+    spark: [18, 20, 16, 22, 19, 21, 17, 20, 18, 19, 17, 18],
   },
   {
     key: 'margin',
-    label: 'Margin / Profitability',
-    idle: 'Stable',
+    label: 'LO Concentration',
+    idleValue: '7',
+    idleStatus: 'Top tier',
     tone: 'green',
     icon: 'margin',
+    sparkType: 'bars' as const,
+    spark: [22, 24, 20, 26, 23, 25, 21, 24, 22, 23, 21, 22],
   },
 ];
+
+const pulseMetricsRendered = pulseMetrics.map((metric, index) => {
+  if (metric.sparkType === 'area') {
+    const { line, area } = areaPaths(metric.spark, SPARK_W, SPARK_H);
+    return { ...metric, line, area, bars: null as null, gradId: `sim-kpi-ssr-${index}` };
+  }
+  return {
+    ...metric,
+    line: '',
+    area: '',
+    bars: barRects(metric.spark, SPARK_W, SPARK_H),
+    gradId: `sim-kpi-ssr-${index}`,
+  };
+});
 
 const watchItems = [
   {
     id: 'fallout',
-    severity: 'High',
-    title: 'West Region pull-through slipping',
-    detail: 'Forecast & margin at risk',
+    severity: 'Critical',
+    title: '$23M closing & fallout exposure',
+    detail: '67 late · 74 fallout risk',
     orderIdle: 2,
     orderActive: 1,
     icon: 'risk',
   },
   {
     id: 'cost',
-    severity: 'Medium',
-    title: 'Cost per loan rising',
-    detail: 'Origination · unit cost pressure',
+    severity: 'Needs Attention',
+    title: 'Bottom-tier originators stalling',
+    detail: '35% with <1 app by mid-month',
     orderIdle: 1,
     orderActive: 2,
     icon: 'cost',
   },
   {
     id: 'margin',
-    severity: 'Watch',
-    title: 'Margin pressure building',
-    detail: 'Pricing & secondary · spread',
+    severity: 'Context & Trends',
+    title: 'Govvie mix drifting off target',
+    detail: '12% decline · profit impact rising',
     orderIdle: 3,
     orderActive: 3,
     icon: 'margin',
@@ -73,14 +133,15 @@ const watchItems = [
 ];
 
 const prompts = [
-  'Where should leadership focus today?',
-  'What changed across the pipeline this week?',
+  'Which loans are at risk of fallout this week?',
+  'Who is in the bottom tier of production?',
 ];
 
-const outcomeItems = [
-  { id: 'fallout', label: 'West Region fallout — cleared', step: 6 },
-  { id: 'cost', label: 'Cost per loan — acknowledged', step: 7 },
-  { id: 'track', label: 'Outcome tracking on', step: 8 },
+const urgencyStack = [
+  { id: 'critical', label: 'Critical', detail: 'Immediate Action Required', step: 5 },
+  { id: 'attention', label: 'Needs Attention', detail: 'Monitor Closely', step: 6 },
+  { id: 'working', label: "What's Working", detail: 'Pull-through stabilizing', step: 7 },
+  { id: 'context', label: 'Context & Trends', detail: 'Govvie mix · rates', step: 8 },
 ];
 
 const toneClass: Record<string, string> = {
@@ -91,39 +152,33 @@ const toneClass: Record<string, string> = {
 };
 
 const severityClass: Record<string, string> = {
-  High: 'bg-[#f8efe2] text-warning',
-  Medium: 'bg-[#e8eef4] text-navy',
-  Watch: 'bg-accent-soft text-accent',
+  Critical: 'bg-[#f8efe2] text-warning',
+  'Needs Attention': 'bg-[#e8eef4] text-navy',
+  'Context & Trends': 'bg-accent-soft text-accent',
 };
 ---
 
 <section
   id="how-it-works"
-  class="scroll-mt-20 border-b border-line bg-surface py-16 sm:py-20 lg:py-24"
-  aria-labelledby="exec-center-heading"
+  class="relative scroll-mt-20 bg-[linear-gradient(180deg,#ffffff_0%,#ffffff_18%,#f4f6fa_42%,#f4f6fa_100%)] pb-6 pt-0 flow-root sm:pb-8 lg:pb-10"
+  aria-label="How Coheus works"
 >
+  <h2 id="exec-center-heading" class="sr-only">From lender signals to executive action</h2>
   <Container>
-    <SectionHeading
-      align="center"
-      class="mb-10 sm:mb-12"
-      headingId="exec-center-heading"
-      title="From business signals to executive action."
-      description="Coheus analyzes mortgage business data in the background, surfaces the signals that deserve attention, explains the drivers, and helps leadership focus on the next best action."
-    />
-
+    <!-- Negative margin is contained by flow-root so only this card peeks — section bg stays put -->
     <div
-      class="sim relative mx-auto max-w-4xl pb-16 sm:pb-20"
+      class="sim relative z-10 mx-auto -mt-[120px] max-w-4xl pb-4 sm:pb-6"
       data-sim
       data-scene="1"
       role="region"
-      aria-label="Animated Executive Center simulation showing how Coheus turns mortgage data into prioritized executive action and tracked outcomes"
+      aria-label="Animated Cohi Insights daily briefing showing how Coheus turns lender signals into prioritized executive action"
     >
       <p
         class="sim-caption mb-4 min-h-[2.75rem] text-center text-sm font-medium tracking-wide text-accent sm:mb-5 sm:min-h-[1.75rem] sm:text-base"
         data-sim-caption
         aria-live="polite"
       >
-        <span data-sim-caption-text>Coheus connects the signals behind your mortgage business.</span><span
+        <span data-sim-caption-text>Cohi connects your lender DNA to what matters today.</span><span
           class="sim-caption-caret"
           data-sim-caption-caret
           aria-hidden="true"></span>
@@ -145,8 +200,8 @@ const severityClass: Record<string, string> = {
                 C
               </span>
               <div>
-                <p class="text-xs font-semibold tracking-tight text-ink">Executive Center</p>
-                <p class="text-[10px] text-ink-subtle">Coheus leadership workspace</p>
+                <p class="text-xs font-semibold tracking-tight text-ink">Cohi Insights</p>
+                <p class="text-[10px] text-ink-subtle">Daily Briefing · Signals. Not Noise.</p>
               </div>
             </div>
             <div
@@ -180,9 +235,9 @@ const severityClass: Record<string, string> = {
           </div>
 
           <div
-            class="sim-body relative bg-[linear-gradient(180deg,#f3f7f6_0%,#f6f7f9_45%,#f8fafb_100%)] p-3 sm:min-h-[23rem] sm:p-5"
+            class="sim-body relative bg-[linear-gradient(180deg,#eef2f8_0%,#f4f6fa_45%,#f8fafb_100%)] p-3 sm:min-h-[23rem] sm:p-5"
           >
-            <!-- Business Pulse -->
+            <!-- Morning Pulse -->
             <div class="mb-3 sm:mb-4" data-sim-pulse>
               <div class="mb-2.5 flex items-center justify-between gap-3 px-0.5">
                 <div class="flex items-center gap-2">
@@ -200,7 +255,7 @@ const severityClass: Record<string, string> = {
                     </svg>
                   </span>
                   <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-subtle">
-                    Business Pulse
+                    Morning Pulse
                   </p>
                 </div>
                 <p
@@ -212,7 +267,7 @@ const severityClass: Record<string, string> = {
               </div>
               <div class="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-2.5">
                 {
-                  pulseMetrics.map((metric, i) => (
+                  pulseMetricsRendered.map((metric, i) => (
                     <div
                       class="sim-kpi rounded-xl border border-line bg-surface p-3 shadow-[0_1px_0_rgb(11_27_43/0.03)]"
                       style={`--i: ${i}`}
@@ -282,22 +337,73 @@ const severityClass: Record<string, string> = {
                             </svg>
                           )}
                         </span>
+                        <div class="sim-kpi-spark-wrap shrink-0" data-sim-kpi-spark aria-hidden="true">
+                          {metric.sparkType === 'area' ? (
+                            <svg
+                              class="sim-kpi-spark"
+                              viewBox={`0 0 ${SPARK_W} ${SPARK_H}`}
+                              width={SPARK_W}
+                              height={SPARK_H}
+                            >
+                              <defs>
+                                <linearGradient id={metric.gradId} x1="0" y1="0" x2="0" y2="1">
+                                  <stop offset="0%" stop-color="#3366b3" stop-opacity="0.35" />
+                                  <stop offset="100%" stop-color="#3366b3" stop-opacity="0" />
+                                </linearGradient>
+                              </defs>
+                              <path
+                                class="sim-kpi-spark-area"
+                                d={metric.area}
+                                fill={`url(#${metric.gradId})`}
+                              />
+                              <path
+                                class="sim-kpi-spark-line"
+                                d={metric.line}
+                                fill="none"
+                                stroke="#0033a0"
+                                stroke-width="1.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              />
+                            </svg>
+                          ) : (
+                            <svg
+                              class="sim-kpi-spark"
+                              viewBox={`0 0 ${SPARK_W} ${SPARK_H}`}
+                              width={SPARK_W}
+                              height={SPARK_H}
+                            >
+                              {metric.bars?.map((bar) => (
+                                <rect
+                                  class="sim-kpi-spark-bar"
+                                  x={bar.x.toFixed(2)}
+                                  y={bar.y.toFixed(2)}
+                                  width={bar.w.toFixed(2)}
+                                  height={bar.h.toFixed(2)}
+                                  rx="0.4"
+                                  fill="#5a7fc4"
+                                />
+                              ))}
+                            </svg>
+                          )}
+                        </div>
                       </div>
                       <p class="mt-2.5 text-[10px] font-medium leading-snug text-ink-subtle sm:text-[11px]">
                         {metric.label}
                       </p>
-                      <p
-                        class="mt-1 text-sm font-semibold tracking-tight text-ink sm:text-[15px]"
-                        data-sim-kpi-value
-                      >
-                        {metric.idle}
-                      </p>
-                      <div class="mt-2.5 h-1 overflow-hidden rounded-full bg-canvas" aria-hidden="true">
-                        <div
-                          class="sim-kpi-fill h-full w-2/5 rounded-full bg-accent/70"
-                          data-sim-kpi-fill
+                      <div class="mt-1 flex items-baseline justify-between gap-2">
+                        <p
+                          class="text-sm font-semibold tracking-tight text-ink sm:text-[15px]"
+                          data-sim-kpi-value
                         >
-                        </div>
+                          {metric.idleValue}
+                        </p>
+                        <p
+                          class="truncate text-[10px] font-medium text-ink-subtle"
+                          data-sim-kpi-status
+                        >
+                          {metric.idleStatus}
+                        </p>
                       </div>
                     </div>
                   ))
@@ -324,14 +430,14 @@ const severityClass: Record<string, string> = {
                         </svg>
                       </span>
                       <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-subtle">
-                        Needs attention today
+                        Ranked by urgency
                       </p>
                     </div>
                     <span
                       class="rounded-full bg-canvas px-2 py-0.5 text-[10px] font-semibold text-ink-subtle ring-1 ring-line"
                       data-sim-queue-badge
                     >
-                      By severity
+                      Critical first
                     </span>
                   </div>
 
@@ -347,9 +453,9 @@ const severityClass: Record<string, string> = {
                           <span
                             class:list={[
                               'absolute inset-y-0 left-0 w-0.5',
-                              item.severity === 'High'
+                              item.severity === 'Critical'
                                 ? 'bg-warning'
-                                : item.severity === 'Medium'
+                                : item.severity === 'Needs Attention'
                                   ? 'bg-navy/50'
                                   : 'bg-accent/50',
                             ]}
@@ -426,17 +532,17 @@ const severityClass: Record<string, string> = {
               <!-- Cohi brief -->
               <div class="lg:col-span-7">
                 <div
-                  class="sim-brief relative min-h-[11.5rem] overflow-hidden rounded-xl border border-white/10 bg-[linear-gradient(145deg,#13263a_0%,#0f5f6b_78%,#1a7a88_100%)] p-4 text-white sm:min-h-[13.5rem] sm:p-5"
+                  class="sim-brief relative min-h-[11.5rem] overflow-hidden rounded-xl border border-accent/15 bg-[linear-gradient(145deg,#eef2f8_0%,#e8eef8_55%,#f7fafb_100%)] p-4 text-ink ring-1 ring-accent/5 sm:min-h-[13.5rem] sm:p-5"
                   data-sim-brief
                 >
                   <div
-                    class="pointer-events-none absolute -right-8 -top-10 h-28 w-28 rounded-full bg-white/5"
+                    class="pointer-events-none absolute -right-8 -top-10 h-28 w-28 rounded-full bg-accent/8"
                     aria-hidden="true"
                   >
                   </div>
                   <div class="relative flex items-center gap-2.5">
                     <span
-                      class="flex h-7 w-7 items-center justify-center rounded-lg bg-white/10 text-[#7dd3c7] ring-1 ring-white/15"
+                      class="flex h-7 w-7 items-center justify-center rounded-lg bg-accent-soft text-accent ring-1 ring-accent/15"
                       aria-hidden="true"
                     >
                       <svg class="h-3.5 w-3.5" viewBox="0 0 14 14" fill="none">
@@ -449,38 +555,38 @@ const severityClass: Record<string, string> = {
                       </svg>
                     </span>
                     <div>
-                      <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-white/65">
-                        Cohi Executive Brief
+                      <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-accent">
+                        Cohi Daily Brief
                       </p>
                       <div class="mt-0.5 flex items-center gap-1.5">
-                        <span class="sim-pulse-dot h-1.5 w-1.5 rounded-full bg-[#7dd3c7]"></span>
-                        <p class="text-[10px] text-white/45">AI insight layer</p>
+                        <span class="sim-pulse-dot h-1.5 w-1.5 rounded-full bg-accent"></span>
+                        <p class="text-[10px] text-ink-subtle">Actionable intelligence before coffee</p>
                       </div>
                     </div>
                   </div>
                   <div class="relative mt-3.5 min-h-[5.5rem] sm:min-h-[6.5rem]">
                     <p
-                      class="sim-brief-idle absolute inset-0 text-sm leading-relaxed text-white/72"
+                      class="sim-brief-idle absolute inset-0 text-sm leading-relaxed text-ink-muted"
                       data-sim-brief-idle
                     >
-                      Cohi is reviewing connected signals across production, pipeline, operations, and
-                      profitability for material leadership issues.
+                      Cohi is reviewing your lender DNA—pull-through, fallout, closings, and LO
+                      production—for signals that need executive attention this morning.
                     </p>
                     <p
-                      class="sim-brief-active absolute inset-0 text-sm leading-relaxed text-white/92 sm:text-[15px]"
+                      class="sim-brief-active absolute inset-0 text-sm leading-relaxed text-ink sm:text-[15px]"
                       data-sim-brief-active
                     >
-                      Fallout risk increased in the West Region, driven by longer processing cycle times,
-                      delayed borrower conditions, and lower pull-through in two branches. This puts
-                      near-term forecast and margin protection at risk.
+                      Immediate action required: $23M exposure across 67 loans at risk of closing late
+                      and 74 at risk of fallout. Longer cycle times and delayed borrower conditions are
+                      driving pull-through slippage in the West.
                     </p>
                     <p
-                      class="sim-brief-resolved absolute inset-0 text-sm leading-relaxed text-white/92 sm:text-[15px]"
+                      class="sim-brief-resolved absolute inset-0 text-sm leading-relaxed text-ink sm:text-[15px]"
                       data-sim-brief-resolved
                     >
-                      West Region fallout is under review with an owner assigned. Early processing
-                      interventions are reducing forecast risk. Secondary cost and margin items remain
-                      acknowledged for follow-up.
+                      Critical is in focus: late-close and fallout risk are the morning priority.
+                      Needs Attention covers bottom-tier originator stall. Context & Trends flags
+                      govvie mix drift—Signals. Not Noise.
                     </p>
                   </div>
                 </div>
@@ -489,60 +595,36 @@ const severityClass: Record<string, string> = {
           </div>
         </div>
 
-        <!-- Floating: Recommended Action -->
+        <!-- Floating: Immediate Action insight -->
         <div
           class="sim-float-action pointer-events-none absolute -right-1 bottom-8 z-40 w-[min(100%,20rem)] sm:-right-3 sm:bottom-10 md:-right-6"
           data-sim-float-action
           aria-hidden="true"
         >
           <div
-            class="rounded-xl border border-accent/20 bg-surface p-4 shadow-elevated ring-1 ring-accent/5 sm:p-5"
+            class="rounded-xl border border-warning/25 bg-surface p-4 shadow-elevated ring-1 ring-warning/10 sm:p-5"
           >
-            <div class="flex items-center gap-2">
-              <span
-                class="flex h-7 w-7 items-center justify-center rounded-lg bg-accent-soft text-accent"
-                aria-hidden="true"
-              >
-                <svg class="h-3.5 w-3.5" viewBox="0 0 14 14" fill="none">
-                  <path
-                    d="M3 7 H11 M7.5 3.5 L11 7 L7.5 10.5"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"></path>
-                </svg>
-              </span>
-              <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-accent">
-                Recommended Action
+            <div class="flex items-center justify-between gap-2">
+              <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-warning">
+                Immediate Action Required
               </p>
+              <span class="rounded-md bg-[#f8efe2] px-1.5 py-0.5 text-[10px] font-semibold text-warning">
+                Critical
+              </span>
             </div>
             <p class="mt-2.5 text-sm font-semibold leading-snug text-ink">
-              Review West Region fallout drivers and processing delays.
+              $23 Million Exposure of Closing Late or Falling Out.
             </p>
-            <dl class="mt-3 space-y-2 text-[11px]">
-              <div class="flex items-center gap-2">
-                <dt class="flex items-center gap-1.5 font-medium text-ink-subtle">
-                  <span class="h-1 w-1 rounded-full bg-accent/60" aria-hidden="true"></span>
-                  Owner
-                </dt>
-                <dd class="text-ink">Regional Operations Lead</dd>
-              </div>
-              <div class="flex items-center gap-2">
-                <dt class="flex items-center gap-1.5 font-medium text-ink-subtle">
-                  <span class="h-1 w-1 rounded-full bg-accent/60" aria-hidden="true"></span>
-                  Next step
-                </dt>
-                <dd>
-                  <span class="rounded-md bg-accent-soft px-2 py-0.5 font-semibold text-accent">
-                    Open signal report
-                  </span>
-                </dd>
-              </div>
-            </dl>
+            <p class="mt-2 text-[11px] leading-relaxed text-ink-muted">
+              67 loans at risk of closing late · 74 loans at risk of fallout.
+            </p>
+            <p class="mt-3 text-[10px] font-medium text-accent">
+              Takeaway · intervene before the week slips
+            </p>
           </div>
         </div>
 
-        <!-- Floating: Success -->
+        <!-- Floating: What's Working insight -->
         <div
           class="sim-float-success pointer-events-none absolute -left-1 bottom-6 z-40 w-[min(100%,19rem)] sm:-left-3 sm:bottom-8 md:-left-5"
           data-sim-float-success
@@ -551,35 +633,30 @@ const severityClass: Record<string, string> = {
           <div
             class="rounded-xl border border-success/20 bg-surface p-4 shadow-elevated ring-1 ring-success/5 sm:p-5"
           >
-            <div class="flex items-center gap-2">
-              <span
-                class="flex h-7 w-7 items-center justify-center rounded-lg bg-[#e7f3ec] text-success"
-                aria-hidden="true"
+            <div class="flex items-center justify-between gap-2">
+              <p
+                class="text-[11px] font-semibold uppercase tracking-[0.12em] text-success"
+                data-sim-success-label
               >
-                <svg class="h-3.5 w-3.5" viewBox="0 0 14 14" fill="none">
-                  <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.4"></circle>
-                  <path
-                    d="M4.2 7.1 L6.1 9 L9.8 5"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"></path>
-                </svg>
-              </span>
-              <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-success">
-                Outcome tracked
+                What's Working
               </p>
+              <span
+                class="rounded-md bg-[#e7f3ec] px-1.5 py-0.5 text-[10px] font-semibold text-success"
+                data-sim-success-badge
+              >
+                Signal
+              </span>
             </div>
             <p class="mt-2.5 text-sm font-semibold leading-snug text-ink" data-sim-success-title>
-              West Region fallout under control — forecast risk reduced
+              Pull-through stabilizing where leadership intervened early
             </p>
             <p class="mt-2 text-[11px] leading-relaxed text-ink-muted" data-sim-success-body>
-              Action completed by Regional Operations Lead. Pull-through stabilizing.
+              West late-close pressure easing. Keep Critical on the morning brief.
             </p>
           </div>
         </div>
 
-        <!-- Floating: resolution checklist -->
+        <!-- Floating: urgency stack -->
         <div
           class="sim-float-checklist pointer-events-none absolute -right-1 top-16 z-30 hidden w-56 sm:block md:-right-4"
           data-sim-float-checklist
@@ -590,7 +667,7 @@ const severityClass: Record<string, string> = {
           >
             <div class="flex items-center gap-2">
               <span
-                class="flex h-5 w-5 items-center justify-center rounded-md bg-[#e8eef4] text-navy"
+                class="flex h-5 w-5 items-center justify-center rounded-md bg-accent-soft text-accent"
                 aria-hidden="true"
               >
                 <svg class="h-3 w-3" viewBox="0 0 12 12" fill="none">
@@ -602,12 +679,12 @@ const severityClass: Record<string, string> = {
                 </svg>
               </span>
               <p class="text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-subtle">
-                Resolution
+                Cohi Insights
               </p>
             </div>
             <ul class="mt-2.5 space-y-2">
               {
-                outcomeItems.map((item, i) => (
+                urgencyStack.map((item, i) => (
                   <li
                     class="sim-check-item flex items-start gap-2 text-[11px] text-ink-muted"
                     style={`--i: ${i}`}
@@ -628,7 +705,12 @@ const severityClass: Record<string, string> = {
                         />
                       </svg>
                     </span>
-                    <span data-sim-check-label>{item.label}</span>
+                    <span class="min-w-0">
+                      <span class="block font-semibold text-ink/80" data-sim-check-label>
+                        {item.label}
+                      </span>
+                      <span class="block text-[10px] text-ink-subtle">{item.detail}</span>
+                    </span>
                   </li>
                 ))
               }
@@ -731,9 +813,9 @@ const severityClass: Record<string, string> = {
       </div>
 
       <p class="sr-only">
-        This animation demonstrates Coheus connecting business signals, sorting issues by severity,
-        explaining drivers with Cohi, assigning an owned action, clearing the highest-priority item,
-        acknowledging secondary items, and tracking outcomes. The sequence loops automatically.
+        This animation demonstrates Cohi Insights ranking Critical, Needs Attention, What's Working,
+        and Context & Trends signals from your lender DNA, explaining drivers in the Daily Brief,
+        and surfacing Immediate Action insight cards. The sequence loops automatically.
       </p>
     </div>
   </Container>
@@ -845,13 +927,68 @@ const severityClass: Record<string, string> = {
   .sim[data-scene='6'] .sim-kpi[data-sim-kpi='fallout'],
   .sim[data-scene='7'] .sim-kpi[data-sim-kpi='fallout'],
   .sim[data-scene='8'] .sim-kpi[data-sim-kpi='fallout'] {
-    border-color: color-mix(in oklab, var(--color-success) 28%, var(--color-line));
+    border-color: color-mix(in oklab, var(--color-warning) 24%, var(--color-line));
     box-shadow: var(--shadow-card);
   }
 
-  .sim-kpi-fill {
-    transition: width 0.75s ease;
-    transition-delay: calc(var(--i) * 0.1s + 0.05s);
+  .sim-kpi-spark-wrap {
+    opacity: 0.85;
+    transition: opacity 0.4s ease;
+  }
+
+  .sim[data-scene='2'] .sim-kpi-spark-wrap,
+  .sim[data-scene='3'] .sim-kpi-spark-wrap,
+  .sim[data-scene='4'] .sim-kpi-spark-wrap,
+  .sim[data-scene='5'] .sim-kpi-spark-wrap {
+    opacity: 1;
+  }
+
+  .sim-kpi-spark-bar,
+  .sim-kpi-spark-area,
+  .sim-kpi-spark-line {
+    transition:
+      opacity 0.35s ease,
+      fill 0.35s ease,
+      stroke 0.35s ease;
+  }
+
+  .sim[data-scene='2'] .sim-kpi[data-sim-kpi='fallout'] .sim-kpi-spark-bar,
+  .sim[data-scene='3'] .sim-kpi[data-sim-kpi='fallout'] .sim-kpi-spark-bar,
+  .sim[data-scene='4'] .sim-kpi[data-sim-kpi='fallout'] .sim-kpi-spark-bar,
+  .sim[data-scene='5'] .sim-kpi[data-sim-kpi='fallout'] .sim-kpi-spark-bar,
+  .sim[data-scene='2'] .sim-kpi[data-sim-kpi='cost'] .sim-kpi-spark-bar,
+  .sim[data-scene='3'] .sim-kpi[data-sim-kpi='cost'] .sim-kpi-spark-bar,
+  .sim[data-scene='4'] .sim-kpi[data-sim-kpi='cost'] .sim-kpi-spark-bar,
+  .sim[data-scene='5'] .sim-kpi[data-sim-kpi='cost'] .sim-kpi-spark-bar {
+    fill: #c4922a;
+  }
+
+  .sim[data-scene='2'] .sim-kpi[data-sim-kpi='fallout'] .sim-kpi-spark-line,
+  .sim[data-scene='3'] .sim-kpi[data-sim-kpi='fallout'] .sim-kpi-spark-line,
+  .sim[data-scene='4'] .sim-kpi[data-sim-kpi='fallout'] .sim-kpi-spark-line,
+  .sim[data-scene='5'] .sim-kpi[data-sim-kpi='fallout'] .sim-kpi-spark-line {
+    stroke: #c4922a;
+  }
+
+  .sim[data-scene='6'] .sim-kpi[data-sim-kpi='fallout'] .sim-kpi-spark-line,
+  .sim[data-scene='7'] .sim-kpi[data-sim-kpi='fallout'] .sim-kpi-spark-line,
+  .sim[data-scene='8'] .sim-kpi[data-sim-kpi='fallout'] .sim-kpi-spark-line {
+    stroke: #00a651;
+  }
+
+  .sim-kpi-value-tick {
+    animation: sim-kpi-tick 0.45s ease;
+  }
+
+  @keyframes sim-kpi-tick {
+    0% {
+      transform: translateY(2px);
+      opacity: 0.55;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
   }
 
   /* ---- Watch list ---- */
@@ -899,21 +1036,21 @@ const severityClass: Record<string, string> = {
   .sim[data-scene='6'] [data-sim-watch='fallout'],
   .sim[data-scene='7'] [data-sim-watch='fallout'],
   .sim[data-scene='8'] [data-sim-watch='fallout'] {
-    border-color: color-mix(in oklab, var(--color-success) 30%, var(--color-line));
-    background: color-mix(in oklab, var(--color-success) 6%, white);
-    opacity: 0.92;
+    border-color: color-mix(in oklab, var(--color-warning) 28%, var(--color-line));
+    background: #fbf7f0;
+    opacity: 0.95;
     transition-delay: 0.08s;
   }
 
   .sim[data-scene='7'] [data-sim-watch='cost'],
   .sim[data-scene='8'] [data-sim-watch='cost'] {
     border-color: color-mix(in oklab, var(--color-accent) 22%, var(--color-line));
-    opacity: 0.85;
+    opacity: 0.9;
     transition-delay: 0.22s;
   }
 
   .sim[data-scene='8'] [data-sim-watch='margin'] {
-    opacity: 0.7;
+    opacity: 0.85;
     transition-delay: 0.36s;
   }
 
@@ -1055,32 +1192,44 @@ const severityClass: Record<string, string> = {
     transition-delay: calc(var(--i) * 0.16s + 0.22s);
   }
 
-  .sim[data-scene='6'] [data-sim-check='fallout'],
-  .sim[data-scene='7'] [data-sim-check='fallout'],
-  .sim[data-scene='8'] [data-sim-check='fallout'],
-  .sim[data-scene='7'] [data-sim-check='cost'],
-  .sim[data-scene='8'] [data-sim-check='cost'],
-  .sim[data-scene='8'] [data-sim-check='track'] {
+  .sim[data-scene='5'] [data-sim-check='critical'],
+  .sim[data-scene='6'] [data-sim-check='critical'],
+  .sim[data-scene='7'] [data-sim-check='critical'],
+  .sim[data-scene='8'] [data-sim-check='critical'],
+  .sim[data-scene='6'] [data-sim-check='attention'],
+  .sim[data-scene='7'] [data-sim-check='attention'],
+  .sim[data-scene='8'] [data-sim-check='attention'],
+  .sim[data-scene='7'] [data-sim-check='working'],
+  .sim[data-scene='8'] [data-sim-check='working'],
+  .sim[data-scene='8'] [data-sim-check='context'] {
     color: var(--color-ink);
   }
 
-  .sim[data-scene='6'] [data-sim-check='fallout'] .sim-check-mark,
-  .sim[data-scene='7'] [data-sim-check='fallout'] .sim-check-mark,
-  .sim[data-scene='8'] [data-sim-check='fallout'] .sim-check-mark,
-  .sim[data-scene='7'] [data-sim-check='cost'] .sim-check-mark,
-  .sim[data-scene='8'] [data-sim-check='cost'] .sim-check-mark,
-  .sim[data-scene='8'] [data-sim-check='track'] .sim-check-mark {
+  .sim[data-scene='5'] [data-sim-check='critical'] .sim-check-mark,
+  .sim[data-scene='6'] [data-sim-check='critical'] .sim-check-mark,
+  .sim[data-scene='7'] [data-sim-check='critical'] .sim-check-mark,
+  .sim[data-scene='8'] [data-sim-check='critical'] .sim-check-mark,
+  .sim[data-scene='6'] [data-sim-check='attention'] .sim-check-mark,
+  .sim[data-scene='7'] [data-sim-check='attention'] .sim-check-mark,
+  .sim[data-scene='8'] [data-sim-check='attention'] .sim-check-mark,
+  .sim[data-scene='7'] [data-sim-check='working'] .sim-check-mark,
+  .sim[data-scene='8'] [data-sim-check='working'] .sim-check-mark,
+  .sim[data-scene='8'] [data-sim-check='context'] .sim-check-mark {
     border-color: transparent;
     background: var(--color-accent-soft);
     color: var(--color-accent);
   }
 
-  .sim[data-scene='6'] [data-sim-check='fallout'] .sim-check-mark svg,
-  .sim[data-scene='7'] [data-sim-check='fallout'] .sim-check-mark svg,
-  .sim[data-scene='8'] [data-sim-check='fallout'] .sim-check-mark svg,
-  .sim[data-scene='7'] [data-sim-check='cost'] .sim-check-mark svg,
-  .sim[data-scene='8'] [data-sim-check='cost'] .sim-check-mark svg,
-  .sim[data-scene='8'] [data-sim-check='track'] .sim-check-mark svg {
+  .sim[data-scene='5'] [data-sim-check='critical'] .sim-check-mark svg,
+  .sim[data-scene='6'] [data-sim-check='critical'] .sim-check-mark svg,
+  .sim[data-scene='7'] [data-sim-check='critical'] .sim-check-mark svg,
+  .sim[data-scene='8'] [data-sim-check='critical'] .sim-check-mark svg,
+  .sim[data-scene='6'] [data-sim-check='attention'] .sim-check-mark svg,
+  .sim[data-scene='7'] [data-sim-check='attention'] .sim-check-mark svg,
+  .sim[data-scene='8'] [data-sim-check='attention'] .sim-check-mark svg,
+  .sim[data-scene='7'] [data-sim-check='working'] .sim-check-mark svg,
+  .sim[data-scene='8'] [data-sim-check='working'] .sim-check-mark svg,
+  .sim[data-scene='8'] [data-sim-check='context'] .sim-check-mark svg {
     opacity: 1;
   }
 
@@ -1164,7 +1313,10 @@ const severityClass: Record<string, string> = {
     .sim-float-success,
     .sim-float-checklist,
     .sim-float-prompts,
-    .sim-kpi-fill,
+    .sim-kpi-spark-wrap,
+    .sim-kpi-spark-bar,
+    .sim-kpi-spark-area,
+    .sim-kpi-spark-line,
     .sim-check-item,
     .sim-check-mark,
     .sim-check-mark svg {

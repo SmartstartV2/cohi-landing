@@ -1,28 +1,28 @@
 @import "tailwindcss";
 
 @theme {
-  --font-display: "Newsreader", ui-serif, Georgia, serif;
-  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
 
-  --color-canvas: #f6f7f9;
+  --color-canvas: #f4f6fa;
   --color-surface: #ffffff;
-  --color-ink: #0b1b2b;
-  --color-ink-muted: #4a5a6a;
-  --color-ink-subtle: #5a6b7c;
-  --color-line: #e4e9ef;
-  --color-line-strong: #d0d8e2;
-  --color-accent: #0f5f6b;
-  --color-accent-hover: #0c4d57;
-  --color-accent-soft: #e7f3f4;
-  --color-accent-mid: #1a7a88;
-  --color-success: #1f7a4d;
+  --color-ink: #0a1628;
+  --color-ink-muted: #44546a;
+  --color-ink-subtle: #5a6b82;
+  --color-line: #e2e8f0;
+  --color-line-strong: #cdd6e4;
+  --color-accent: #0033a0;
+  --color-accent-hover: #002878;
+  --color-accent-soft: #e8eef8;
+  --color-accent-mid: #3366b3;
+  --color-success: #00a651;
   --color-warning: #9a6b16;
   --color-danger: #a33b3b;
-  --color-navy: #13263a;
-  --color-navy-deep: #0b1b2b;
+  --color-navy: #001a52;
+  --color-navy-deep: #00113a;
 
-  --shadow-card: 0 1px 2px rgb(11 27 43 / 0.04), 0 8px 24px rgb(11 27 43 / 0.04);
-  --shadow-elevated: 0 2px 4px rgb(11 27 43 / 0.04), 0 16px 40px rgb(11 27 43 / 0.08);
+  --shadow-card: 0 1px 2px rgb(0 51 160 / 0.04), 0 8px 24px rgb(10 22 40 / 0.05);
+  --shadow-elevated: 0 2px 4px rgb(0 51 160 / 0.05), 0 16px 40px rgb(10 22 40 / 0.09);
 }
 
 @layer base {

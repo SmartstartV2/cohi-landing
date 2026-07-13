@@ -7,105 +7,199 @@ const base = import.meta.env.BASE_URL;
 const centerLinks = [
   { label: 'Platform', href: '#platform' },
   { label: 'Cohi', href: '#ai-intelligence' },
-  { label: 'Solutions', href: '#solutions' },
+  { label: 'Why Cohi', href: '#problem' },
   { label: 'Resources', href: '#resources' },
   { label: 'Company', href: '#company' },
 ];
 ---
 
 <header
-  class="sticky top-0 z-50 border-b border-line/80 bg-surface/85 backdrop-blur-md"
+  class="nav-header sticky top-0 z-50 border-b border-transparent bg-surface/70 backdrop-blur-xl transition-[background-color,border-color,box-shadow] duration-300 data-[scrolled=true]:border-line/70 data-[scrolled=true]:bg-surface/92 data-[scrolled=true]:shadow-[0_1px_0_rgb(11_27_43_/_0.03),0_8px_24px_rgb(11_27_43_/_0.04)]"
   data-nav
+  data-scrolled="false"
 >
-  <Container class="flex h-16 items-center justify-between gap-4">
-    <a href={base} class="flex items-center" aria-label="Coheus home">
+  <div
+    class="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/25 to-transparent"
+    aria-hidden="true"
+  >
+  </div>
+
+  <Container class="relative flex h-[4.25rem] items-center justify-between gap-4">
+    <a
+      href={base}
+      class="relative z-10 flex shrink-0 items-center transition-opacity duration-200 hover:opacity-80"
+      aria-label="Coheus home"
+    >
       <img
         src="https://www.coheus.com/coheus-logo.png"
         alt="Coheus"
-        class="h-11 w-auto"
-        width="176"
-        height="44"
+        class="h-9 w-auto sm:h-10"
+        width="160"
+        height="40"
       />
     </a>
 
-    <nav class="hidden items-center gap-7 lg:flex" aria-label="Primary">
+    <nav
+      class="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-1 lg:flex"
+      aria-label="Primary"
+    >
       {
         centerLinks.map((link) => (
           <a
             href={link.href}
-            class="text-sm font-medium text-ink-muted transition-colors hover:text-ink"
+            class="nav-link group relative px-3 py-2 text-[0.8125rem] font-medium tracking-[0.01em] text-ink-muted transition-colors duration-200 hover:text-ink"
           >
             {link.label}
+            <span
+              class="pointer-events-none absolute inset-x-3 -bottom-px h-px origin-center scale-x-0 bg-accent/70 transition-transform duration-300 ease-out group-hover:scale-x-100"
+              aria-hidden="true"
+            />
           </a>
         ))
       }
     </nav>
 
-    <div class="hidden items-center gap-3 sm:flex">
+    <div class="relative z-10 flex items-center gap-1.5 sm:gap-2">
       <a
         href="#contact"
-        class="text-sm font-medium text-ink-muted transition-colors hover:text-ink"
+        class="nav-link group relative hidden px-3 py-2 text-[0.8125rem] font-medium tracking-[0.01em] text-ink-muted transition-colors duration-200 hover:text-ink sm:inline-flex"
       >
         Contact
+        <span
+          class="pointer-events-none absolute inset-x-3 -bottom-px h-px origin-center scale-x-0 bg-accent/70 transition-transform duration-300 ease-out group-hover:scale-x-100"
+          aria-hidden="true"
+        >
+        </span>
       </a>
-      <Button href="#demo" size="sm">Test Drive</Button>
-    </div>
+      <div class="hidden sm:block">
+        <Button href="#demo" size="sm" class="group shadow-sm">
+          Test Drive
+          <svg
+            class="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5"
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M3 8h9.5M9.5 4.5 13 8l-3.5 3.5"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+            </path>
+          </svg>
+        </Button>
+      </div>
 
-    <button
-      type="button"
-      class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-line text-ink lg:hidden"
-      aria-expanded="false"
-      aria-controls="mobile-nav"
-      data-nav-toggle
-      aria-label="Open menu"
-    >
-      <svg class="h-5 w-5" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <path
-          d="M3.5 6.5h13M3.5 10h13M3.5 13.5h13"
-          stroke="currentColor"
-          stroke-width="1.5"
-          stroke-linecap="round"></path>
-      </svg>
-    </button>
+      <button
+        type="button"
+        class="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-line/90 bg-surface/80 text-ink transition-colors duration-200 hover:border-accent/30 hover:text-accent lg:hidden"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+        data-nav-toggle
+        aria-label="Open menu"
+      >
+        <span class="relative h-4 w-4" aria-hidden="true">
+          <span
+            class="absolute left-0 top-0.5 block h-[1.5px] w-4 rounded-full bg-current transition-transform duration-300 ease-out"
+            data-burger-top
+          >
+          </span>
+          <span
+            class="absolute left-0 top-[7px] block h-[1.5px] w-4 rounded-full bg-current transition-opacity duration-200"
+            data-burger-mid
+          >
+          </span>
+          <span
+            class="absolute left-0 top-[13px] block h-[1.5px] w-4 rounded-full bg-current transition-transform duration-300 ease-out"
+            data-burger-bot
+          >
+          </span>
+        </span>
+      </button>
+    </div>
   </Container>
 
-  <div id="mobile-nav" class="hidden border-t border-line bg-surface lg:hidden" data-mobile-nav>
-    <Container class="flex flex-col gap-1 py-4">
-      {
-        centerLinks.map((link) => (
-          <a
-            href={link.href}
-            class="rounded-lg px-3 py-2.5 text-sm font-medium text-ink-muted hover:bg-canvas hover:text-ink"
-          >
-            {link.label}
-          </a>
-        ))
-      }
-      <a
-        href="#contact"
-        class="rounded-lg px-3 py-2.5 text-sm font-medium text-ink-muted hover:bg-canvas hover:text-ink"
-      >
-        Contact
-      </a>
-      <div class="mt-2 px-3 pb-1">
-        <Button href="#demo" class="w-full">Test Drive</Button>
-      </div>
-    </Container>
+  <div
+    id="mobile-nav"
+    class="grid grid-rows-[0fr] overflow-hidden border-t border-transparent bg-surface/95 backdrop-blur-xl transition-[grid-template-rows,border-color] duration-300 ease-out lg:hidden data-[open=true]:grid-rows-[1fr] data-[open=true]:border-line/70"
+    data-mobile-nav
+    data-open="false"
+  >
+    <div class="min-h-0 overflow-hidden">
+      <Container class="flex flex-col gap-0.5 py-3 pb-4">
+        {
+          centerLinks.map((link) => (
+            <a
+              href={link.href}
+              class="rounded-lg px-3 py-2.5 text-sm font-medium text-ink-muted transition-colors duration-200 hover:bg-accent-soft/60 hover:text-ink"
+            >
+              {link.label}
+            </a>
+          ))
+        }
+        <a
+          href="#contact"
+          class="rounded-lg px-3 py-2.5 text-sm font-medium text-ink-muted transition-colors duration-200 hover:bg-accent-soft/60 hover:text-ink"
+        >
+          Contact
+        </a>
+        <div class="mt-2 px-3 pb-1">
+          <Button href="#demo" class="group w-full">
+            Test Drive
+            <svg
+              class="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5"
+              viewBox="0 0 16 16"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M3 8h9.5M9.5 4.5 13 8l-3.5 3.5"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+              </path>
+            </svg>
+          </Button>
+        </div>
+      </Container>
+    </div>
   </div>
 </header>
 
 <script>
+  const header = document.querySelector<HTMLElement>('[data-nav]');
   const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
   const panel = document.querySelector<HTMLElement>('[data-mobile-nav]');
+  const burgerTop = document.querySelector<HTMLElement>('[data-burger-top]');
+  const burgerMid = document.querySelector<HTMLElement>('[data-burger-mid]');
+  const burgerBot = document.querySelector<HTMLElement>('[data-burger-bot]');
 
-  const setOpen = (open: boolean) => {
-    panel?.classList.toggle('hidden', !open);
-    toggle?.setAttribute('aria-expanded', String(open));
-    toggle?.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  const setScrolled = () => {
+    const scrolled = window.scrollY > 8;
+    header?.setAttribute('data-scrolled', String(scrolled));
   };
 
+  const setOpen = (open: boolean) => {
+    panel?.setAttribute('data-open', String(open));
+    toggle?.setAttribute('aria-expanded', String(open));
+    toggle?.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+
+    if (burgerTop && burgerMid && burgerBot) {
+      burgerTop.style.transform = open ? 'translateY(5.5px) rotate(45deg)' : '';
+      burgerMid.style.opacity = open ? '0' : '1';
+      burgerBot.style.transform = open ? 'translateY(-5.5px) rotate(-45deg)' : '';
+    }
+  };
+
+  setScrolled();
+  window.addEventListener('scroll', setScrolled, { passive: true });
+
   toggle?.addEventListener('click', () => {
-    setOpen(panel?.classList.contains('hidden') ?? true);
+    setOpen(panel?.getAttribute('data-open') !== 'true');
   });
 
   panel?.querySelectorAll('a').forEach((link) => {

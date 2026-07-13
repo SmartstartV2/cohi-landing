@@ -2,120 +2,465 @@
 import Container from './ui/Container.astro';
 import SectionHeading from './ui/SectionHeading.astro';
 
-const systems = ['LOS', 'CRM', 'Finance', 'Operations', 'Marketing', 'HR', 'Servicing'];
-
-const fragments = [
-  { label: 'Pipeline', value: '—', drift: '-rotate-2 translate-x-1' },
-  { label: 'Fallout', value: '?', drift: 'rotate-1 -translate-y-1' },
-  { label: 'Cost / loan', value: '···', drift: '-rotate-1 translate-y-0.5' },
-  { label: 'Margin', value: '—', drift: 'rotate-2 -translate-x-0.5' },
-];
-
 const pains = [
-  { title: 'Too many dashboards', body: 'Teams search instead of act.' },
-  { title: 'Disconnected data', body: 'Performance lives in silos.' },
-  { title: 'Slow visibility', body: 'Leaders see what, not why.' },
-  { title: 'Hidden friction', body: 'Cost and fallout compound quietly.' },
+  {
+    id: 'split',
+    title: 'Noise, not signals',
+    body: 'Every report is true. None of them say what is Critical.',
+    stageLabel: 'Everything looks important',
+  },
+  {
+    id: 'late',
+    title: 'Intelligence arrives late',
+    body: 'Issues start midweek and surface in next week’s pack—not before coffee.',
+    stageLabel: 'The review is already behind',
+  },
+  {
+    id: 'urgency',
+    title: 'Urgency isn’t ranked',
+    body: 'Critical exposure sits beside Context with no Immediate Action Required.',
+    stageLabel: 'Nothing says Critical first',
+  },
+  {
+    id: 'meetings',
+    title: 'Meetings replace decisions',
+    body: 'Leaders debate dashboards instead of acting on a shared morning signal.',
+    stageLabel: 'Debate, not a decision',
+  },
 ];
+
+const splitSignals = [
+  { label: 'Pull-Through', value: 'Volume up', tone: 'ok', badge: 'Equal' },
+  { label: 'Fallout', value: '$23M exposure', tone: 'warn', badge: 'Equal' },
+  { label: 'Late closings', value: '67 loans at risk', tone: 'warn', badge: 'Equal' },
+  { label: 'LO tiers', value: 'Bottom tier stalling', tone: 'risk', badge: 'Equal' },
+];
+
+const urgencyCards = [
+  {
+    title: '$23M closing & fallout exposure',
+    meta: '67 late · 74 fallout risk',
+    badge: 'Unlabeled',
+    tone: 'risk',
+  },
+  {
+    title: 'Bottom-tier originators stalling',
+    meta: '35% with <1 app by mid-month',
+    badge: 'Unlabeled',
+    tone: 'warn',
+  },
+  {
+    title: 'Govvie mix drifting off target',
+    meta: '12% decline · profit impact rising',
+    badge: 'Unlabeled',
+    tone: 'muted',
+  },
+];
+
+const timelineSteps = [
+  { day: 'Wed', note: 'West pull-through slips', tone: 'warn' },
+  { day: 'Thu', note: 'Fallout exposure climbs', tone: 'warn' },
+  { day: 'Fri', note: 'Late closings compound', tone: 'risk' },
+  { day: 'Mon', note: 'Still waiting on the weekly pack', tone: 'muted' },
+];
+
+const debateItems = [
+  { label: 'CLO view', value: 'Fallout is the issue' },
+  { label: 'CFO view', value: 'Margin is the issue' },
+  { label: 'Sales view', value: 'Pipeline looks healthy' },
+];
+
+const toneClass: Record<string, string> = {
+  ok: 'text-success',
+  warn: 'text-warning',
+  risk: 'text-danger',
+  muted: 'text-ink-subtle',
+};
 ---
 
-<section id="solutions" class="scroll-mt-20 border-b border-line bg-surface py-20 sm:py-24">
+<section id="problem" class="scroll-mt-20 bg-surface py-20 sm:py-24" data-problem>
   <Container>
-    <SectionHeading
-      title="Mortgage leaders do not need more reports. They need clearer signals."
-      description="Data already spans LOS, CRM, finance, operations, and servicing. The hard part is knowing which signal matters now."
-    />
+    <div class="grid items-start gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
+      <div class="lg:sticky lg:top-28">
+        <p
+          class="mb-3 text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-accent"
+          data-reveal
+        >
+          Why Cohi?
+        </p>
+        <SectionHeading
+          title="Mortgage leaders do not need more dashboards. They need clearer signals."
+          description="Pull-through, fallout, closings, and LO production already live in your systems. The hard part is knowing which signal matters this morning."
+        />
 
-    <div
-      class="problem-stage relative mt-12 overflow-hidden rounded-[1.75rem] border border-line bg-[radial-gradient(120%_80%_at_50%_0%,#e7f3f4_0%,#f6f7f9_42%,#ffffff_100%)] px-5 py-10 sm:mt-14 sm:px-8 sm:py-12 lg:px-12"
-      data-problem-stage
-    >
-      <div
-        class="pointer-events-none absolute inset-0 opacity-[0.35]"
-        style="background-image: linear-gradient(to right, rgb(11 27 43 / 0.04) 1px, transparent 1px), linear-gradient(to bottom, rgb(11 27 43 / 0.04) 1px, transparent 1px); background-size: 28px 28px;"
-        aria-hidden="true"
-      >
-      </div>
-
-      <p class="relative text-center text-xs font-semibold uppercase tracking-[0.16em] text-ink-subtle">
-        Across the mortgage stack
-      </p>
-
-      <div
-        class="relative mt-5 flex flex-wrap items-center justify-center gap-2 sm:gap-2.5"
-        aria-label="Disconnected systems"
-      >
-        {
-          systems.map((system) => (
-            <span
-              class="problem-chip rounded-lg border border-line-strong/80 bg-surface/90 px-3 py-1.5 text-xs font-medium text-ink-muted shadow-card sm:text-sm"
-              data-problem-chip
-            >
-              {system}
-            </span>
-          ))
-        }
-      </div>
-
-      <div class="relative mx-auto mt-8 max-w-3xl" aria-hidden="true">
-        <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+        <div
+          class="mt-10 space-y-2"
+          role="tablist"
+          aria-label="Leadership signal problems"
+          data-problem-tabs
+        >
           {
-            fragments.map((item) => (
-              <div
-                class:list={[
-                  'problem-fragment rounded-xl border border-dashed border-line-strong bg-surface/70 px-3.5 py-3 backdrop-blur-[2px]',
-                  item.drift,
-                ]}
-                data-problem-fragment
+            pains.map((item, index) => (
+              <button
+                type="button"
+                role="tab"
+                id={`problem-tab-${item.id}`}
+                aria-controls={`problem-panel-${item.id}`}
+                aria-selected={index === 0 ? 'true' : 'false'}
+                tabindex={index === 0 ? 0 : -1}
+                data-problem-tab={item.id}
+                data-reveal
+                class="problem-tab group w-full cursor-pointer rounded-xl border border-transparent px-4 py-3.5 text-left transition-[border-color,background-color,box-shadow,color,transform] duration-200 hover:border-line hover:bg-canvas/80 hover:shadow-sm aria-selected:border-line-strong aria-selected:bg-canvas aria-selected:shadow-card aria-selected:hover:border-line-strong aria-selected:hover:bg-canvas"
               >
-                <p class="text-[11px] font-medium uppercase tracking-[0.12em] text-ink-subtle">
-                  {item.label}
-                </p>
-                <p class="mt-1.5 font-display text-xl font-semibold tracking-tight text-ink/35">
-                  {item.value}
-                </p>
-              </div>
+                <span class="flex items-start gap-3">
+                  <span
+                    data-tab-index
+                    class="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-surface text-[11px] font-bold text-ink-subtle ring-1 ring-line transition-colors duration-300"
+                    aria-hidden="true"
+                  >
+                    {index + 1}
+                  </span>
+                  <span class="min-w-0">
+                    <span
+                      data-tab-title
+                      class="block text-sm font-semibold tracking-tight text-ink-muted transition-colors duration-300"
+                    >
+                      {item.title}
+                    </span>
+                    <span
+                      data-tab-body
+                      class="mt-1 block text-sm leading-relaxed text-ink-subtle transition-colors duration-300"
+                    >
+                      {item.body}
+                    </span>
+                  </span>
+                </span>
+              </button>
             ))
           }
         </div>
+      </div>
 
-        <div class="pointer-events-none absolute inset-x-6 top-1/2 h-px -translate-y-1/2 sm:inset-x-10">
-          <div
-            class="problem-scan absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-accent/50 to-transparent"
-            data-problem-scan
+      <div
+        class="problem-stage relative overflow-hidden rounded-2xl border border-line bg-surface shadow-elevated"
+        data-problem-stage
+        aria-live="polite"
+      >
+        <div
+          class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(0,51,160,0.04),transparent_60%)]"
+          aria-hidden="true"
+        >
+        </div>
+
+        <div
+          class="relative flex items-center justify-between gap-3 border-b border-line bg-[linear-gradient(180deg,#fbfcfd_0%,#ffffff_100%)] px-5 py-3.5 sm:px-6"
+          data-problem-chrome
+        >
+          <div>
+            <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-subtle">
+              Without Cohi · Weekly ops pack
+            </p>
+            <p
+              class="mt-0.5 font-display text-lg font-semibold tracking-tight text-ink"
+              data-problem-stage-label
+            >
+              {pains[0].stageLabel}
+            </p>
+          </div>
+          <span
+            class="inline-flex items-center gap-1.5 rounded-full bg-canvas px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-ink-subtle ring-1 ring-line"
+            data-problem-live
           >
+            <span class="problem-live-dot h-1.5 w-1.5 rounded-full bg-warning" aria-hidden="true"
+            ></span>
+            <span data-problem-live-text>Live</span>
+          </span>
+        </div>
+
+        <div class="relative min-h-[26rem] px-5 py-6 sm:min-h-[28rem] sm:px-6">
+          <!-- Panel: Noise, not signals -->
+          <div
+            id="problem-panel-split"
+            role="tabpanel"
+            aria-labelledby="problem-tab-split"
+            data-problem-panel="split"
+            class="problem-panel absolute inset-x-5 top-6 bottom-6 sm:inset-x-6"
+          >
+            <div class="flex h-full flex-col justify-center">
+              <div class="flex items-center justify-between gap-2">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-subtle">
+                  Export · PDF briefing
+                </p>
+                <span class="text-[11px] font-medium text-ink-muted" data-scene-owner-tag>
+                  No Critical first
+                </span>
+              </div>
+
+              <ul class="mt-4 space-y-0 divide-y divide-line border-y border-line" role="list">
+                {
+                  splitSignals.map((signal) => (
+                    <li
+                      class="flex items-center justify-between gap-3 py-2.5"
+                      data-scene-signal
+                    >
+                      <div class="min-w-0">
+                        <p class="text-sm text-ink-muted">{signal.label}</p>
+                      </div>
+                      <div class="flex shrink-0 items-center gap-2">
+                        <span class="rounded-md bg-canvas px-1.5 py-0.5 text-[10px] font-semibold text-ink-subtle ring-1 ring-line">
+                          {signal.badge}
+                        </span>
+                        <p
+                          class:list={[
+                            'text-sm font-semibold tracking-tight',
+                            toneClass[signal.tone],
+                          ]}
+                        >
+                          {signal.value}
+                        </p>
+                      </div>
+                    </li>
+                  ))
+                }
+              </ul>
+
+              <div
+                class="mt-4 rounded-lg border border-dashed border-line-strong bg-canvas/70 px-3.5 py-3"
+                data-scene-priority
+              >
+                <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-subtle">
+                  Critical first?
+                </p>
+                <p
+                  class="mt-1.5 font-display text-lg font-semibold tracking-tight text-ink/40"
+                  data-scene-priority-value
+                >
+                  —
+                </p>
+                <p class="mt-1 text-xs text-ink-subtle" data-scene-priority-note>
+                  Four true signals. Zero ranked urgency.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel: Intelligence arrives late -->
+          <div
+            id="problem-panel-late"
+            role="tabpanel"
+            aria-labelledby="problem-tab-late"
+            data-problem-panel="late"
+            class="problem-panel absolute inset-x-5 top-6 bottom-6 sm:inset-x-6"
+            hidden
+          >
+            <div class="flex h-full flex-col justify-center">
+              <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-subtle">
+                Issue timeline
+              </p>
+              <ol class="mt-4 space-y-2.5">
+                {
+                  timelineSteps.map((step) => (
+                    <li
+                      class="flex items-start gap-3 rounded-xl border border-line bg-canvas/60 px-3.5 py-3"
+                      data-scene-timeline-step
+                    >
+                      <span
+                        class:list={[
+                          'mt-0.5 w-10 shrink-0 text-[11px] font-semibold uppercase tracking-[0.1em]',
+                          toneClass[step.tone],
+                        ]}
+                      >
+                        {step.day}
+                      </span>
+                      <p class="text-sm leading-relaxed text-ink-muted">{step.note}</p>
+                    </li>
+                  ))
+                }
+              </ol>
+              <div
+                class="mt-4 rounded-lg border border-dashed border-line-strong bg-canvas/70 px-3.5 py-3"
+                data-scene-late-result
+              >
+                <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-subtle">
+                  Monday briefing
+                </p>
+                <p class="mt-1.5 text-sm font-semibold text-ink">
+                  Still assembling the pack
+                </p>
+                <p class="mt-1 text-xs text-ink-subtle">
+                  The signal started Wednesday. Leadership sees it next week—not before coffee.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel: Urgency isn’t ranked -->
+          <div
+            id="problem-panel-urgency"
+            role="tabpanel"
+            aria-labelledby="problem-tab-urgency"
+            data-problem-panel="urgency"
+            class="problem-panel absolute inset-x-5 top-6 bottom-6 sm:inset-x-6"
+            hidden
+          >
+            <div class="flex h-full flex-col justify-center">
+              <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-subtle">
+                Insight cards · unsorted
+              </p>
+              <ul class="mt-4 space-y-2.5" data-scene-urgency-list>
+                {
+                  urgencyCards.map((card) => (
+                    <li
+                      class="rounded-xl border border-line bg-canvas/60 px-4 py-3"
+                      data-scene-urgency-card
+                    >
+                      <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                          <p class="font-display text-base font-semibold tracking-tight text-ink">
+                            {card.title}
+                          </p>
+                          <p class="mt-1 text-sm leading-relaxed text-ink-muted">{card.meta}</p>
+                        </div>
+                        <span class="shrink-0 rounded-md bg-canvas px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-ink-subtle ring-1 ring-line">
+                          {card.badge}
+                        </span>
+                      </div>
+                    </li>
+                  ))
+                }
+              </ul>
+
+              <p
+                class="mt-4 rounded-lg border border-warning/20 bg-[#fcf8f2] px-3.5 py-3 text-sm leading-relaxed text-ink-muted"
+                data-scene-urgency-note
+              >
+                The exposure is visible. Nothing says Immediate Action Required. Fallout keeps
+                climbing.
+              </p>
+            </div>
+          </div>
+
+          <!-- Panel: Meetings replace decisions -->
+          <div
+            id="problem-panel-meetings"
+            role="tabpanel"
+            aria-labelledby="problem-tab-meetings"
+            data-problem-panel="meetings"
+            class="problem-panel absolute inset-x-5 top-6 bottom-6 sm:inset-x-6"
+            hidden
+          >
+            <div class="flex h-full flex-col justify-center">
+              <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-subtle">
+                Standing leadership review
+              </p>
+              <ul class="mt-4 space-y-2.5">
+                {
+                  debateItems.map((item) => (
+                    <li
+                      class="rounded-xl border border-line bg-canvas/60 px-3.5 py-3"
+                      data-scene-debate
+                    >
+                      <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-subtle">
+                        {item.label}
+                      </p>
+                      <p class="mt-1 text-sm font-semibold text-ink">{item.value}</p>
+                    </li>
+                  ))
+                }
+              </ul>
+
+              <div
+                class="mt-4 rounded-lg border border-dashed border-line-strong bg-canvas/70 px-3.5 py-3"
+                data-scene-decision
+              >
+                <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-subtle">
+                  Shared morning signal
+                </p>
+                <p class="mt-1.5 font-display text-lg font-semibold tracking-tight text-ink/40">
+                  Still debating
+                </p>
+                <p class="mt-1 text-xs text-ink-subtle">
+                  Three true perspectives. No Immediate Action Required.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="relative mx-auto mt-8 max-w-md text-center" data-problem-focus>
-        <div class="mx-auto mb-4 h-10 w-px bg-gradient-to-b from-line-strong to-ink/20" aria-hidden="true"></div>
-        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-ink-subtle">Leadership view</p>
-        <p class="mt-2 font-display text-2xl font-semibold tracking-tight text-ink sm:text-[1.75rem]">
-          No clear signal
-        </p>
-        <p class="mt-2 text-sm text-ink-muted">
-          Priority today:
-          <span
-            class="problem-priority ml-1 inline-block min-w-[9.5rem] border-b border-dashed border-ink/25 text-left font-medium text-ink/45"
-            data-problem-priority
-            aria-live="polite"
+        <div
+          class="relative flex items-center justify-between gap-3 border-t border-line px-5 py-3.5 sm:px-6"
+        >
+          <p class="text-[11px] tracking-[0.04em] text-ink-subtle" data-problem-footer>
+            Without a ranked signal, leadership stays reactive
+          </p>
+          <a
+            href="#solution"
+            class="shrink-0 text-xs font-semibold text-accent transition-colors hover:text-accent-hover"
           >
-            —
-          </span>
-        </p>
+            See how Cohi answers this →
+          </a>
+        </div>
       </div>
-
-      <ul class="relative mx-auto mt-10 grid max-w-3xl gap-x-8 gap-y-5 sm:grid-cols-2">
-        {
-          pains.map((item) => (
-            <li class="border-l-2 border-line-strong pl-4" data-problem-pain>
-              <p class="text-sm font-semibold tracking-tight text-ink">{item.title}</p>
-              <p class="mt-1 text-sm leading-relaxed text-ink-muted">{item.body}</p>
-            </li>
-          ))
-        }
-      </ul>
     </div>
   </Container>
 </section>
+
+<style>
+  .problem-tab:hover [data-tab-index] {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    box-shadow: inset 0 0 0 1px var(--color-line-strong);
+  }
+
+  .problem-tab:hover [data-tab-title] {
+    color: var(--color-ink);
+  }
+
+  .problem-tab:hover [data-tab-body] {
+    color: var(--color-ink-muted);
+  }
+
+  .problem-tab[aria-selected='true'] [data-tab-index],
+  .problem-tab[aria-selected='true']:hover [data-tab-index] {
+    background: var(--color-navy);
+    color: white;
+    box-shadow: inset 0 0 0 1px var(--color-navy);
+  }
+
+  .problem-tab[aria-selected='true'] [data-tab-title],
+  .problem-tab[aria-selected='true']:hover [data-tab-title] {
+    color: var(--color-ink);
+  }
+
+  .problem-tab[aria-selected='true'] [data-tab-body],
+  .problem-tab[aria-selected='true']:hover [data-tab-body] {
+    color: var(--color-ink-muted);
+  }
+
+  .problem-live-dot[data-playing='true'] {
+    animation: problem-pulse 1.2s ease-in-out infinite;
+  }
+
+  @keyframes problem-pulse {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.4;
+      transform: scale(0.85);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .problem-live-dot[data-playing='true'] {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  import { initProblemSimulation } from '../scripts/problem-simulation';
+  initProblemSimulation();
+</script>
