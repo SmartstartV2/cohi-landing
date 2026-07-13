@@ -3,10 +3,9 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
-// For project Pages (username.github.io/cohi-landing/), keep base as '/cohi-landing'.
-// For a user/org site (username.github.io), set base to '/'.
+// Project Pages URL: https://smartstartv2.github.io/cohi-landing/
 export default defineConfig({
-  site: 'https://example.github.io',
+  site: 'https://smartstartv2.github.io',
   base: '/cohi-landing',
   vite: {
     plugins: [tailwindcss()],
