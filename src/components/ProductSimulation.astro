@@ -532,11 +532,11 @@ const severityClass: Record<string, string> = {
               <!-- Cohi brief -->
               <div class="lg:col-span-7">
                 <div
-                  class="sim-brief relative min-h-[11.5rem] overflow-hidden rounded-xl border border-accent/15 bg-[linear-gradient(145deg,#eef2f8_0%,#e8eef8_55%,#f7fafb_100%)] p-4 text-ink ring-1 ring-accent/5 sm:min-h-[13.5rem] sm:p-5"
+                  class="sim-brief relative min-h-[13.5rem] overflow-hidden rounded-xl border border-accent/20 bg-[linear-gradient(145deg,#eef2f8_0%,#e8eef8_55%,#f7fafb_100%)] p-4 text-ink shadow-[0_1px_2px_rgb(0_51_160_/_0.06),0_10px_28px_rgb(0_51_160_/_0.12)] sm:min-h-[15rem] sm:p-5"
                   data-sim-brief
                 >
                   <div
-                    class="pointer-events-none absolute -right-8 -top-10 h-28 w-28 rounded-full bg-accent/8"
+                    class="pointer-events-none absolute -right-10 -top-12 h-36 w-36 rounded-full bg-accent/[0.04] blur-3xl"
                     aria-hidden="true"
                   >
                   </div>
@@ -564,30 +564,82 @@ const severityClass: Record<string, string> = {
                       </div>
                     </div>
                   </div>
-                  <div class="relative mt-3.5 min-h-[5.5rem] sm:min-h-[6.5rem]">
-                    <p
-                      class="sim-brief-idle absolute inset-0 text-sm leading-relaxed text-ink-muted"
+                  <div class="relative mt-3.5 min-h-[8.5rem] sm:min-h-[9.5rem]">
+                    <div
+                      class="sim-brief-idle absolute inset-0"
                       data-sim-brief-idle
                     >
-                      Cohi is reviewing your lender DNA—pull-through, fallout, closings, and LO
-                      production—for signals that need executive attention this morning.
-                    </p>
-                    <p
-                      class="sim-brief-active absolute inset-0 text-sm leading-relaxed text-ink sm:text-[15px]"
+                      <p class="text-sm leading-relaxed text-ink-muted">
+                        Cohi is reviewing your lender DNA—pull-through, fallout, closings, and LO
+                        production—for signals that need executive attention this morning.
+                      </p>
+                      <div
+                        class="sim-brief-processing mt-3"
+                        aria-hidden="true"
+                      >
+                        <div class="flex items-center justify-between gap-2">
+                          <p class="text-[10px] font-medium text-ink-subtle">Processing signals…</p>
+                        </div>
+                        <div
+                          class="sim-brief-processing-track mt-1.5 h-1 overflow-hidden rounded-full bg-canvas ring-1 ring-line/50"
+                        >
+                          <span class="sim-brief-processing-bar block h-full rounded-full bg-accent"></span>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="sim-brief-active absolute inset-0"
                       data-sim-brief-active
                     >
-                      Immediate action required: $23M exposure across 67 loans at risk of closing late
-                      and 74 at risk of fallout. Longer cycle times and delayed borrower conditions are
-                      driving pull-through slippage in the West.
-                    </p>
+                      <p class="text-sm leading-relaxed text-ink sm:text-[15px]">
+                        Immediate action required: $23M exposure across 67 loans at risk of closing late
+                        and 74 at risk of fallout. Longer cycle times and delayed borrower conditions are
+                        driving pull-through slippage in the West.
+                      </p>
+                      <div
+                        class="sim-brief-actions-active mt-3 flex flex-wrap gap-2"
+                        aria-hidden="true"
+                      >
+                        <span
+                          class="sim-brief-chip sim-brief-chip--primary inline-flex items-center rounded-lg px-2.5 py-1.5 text-[10px] font-semibold"
+                        >
+                          View at-risk loans
+                        </span>
+                        <span
+                          class="sim-brief-chip inline-flex items-center rounded-lg border border-line bg-surface px-2.5 py-1.5 text-[10px] font-semibold text-ink-muted"
+                        >
+                          Ask Cohi why
+                        </span>
+                      </div>
+                    </div>
                     <p
                       class="sim-brief-resolved absolute inset-0 text-sm leading-relaxed text-ink sm:text-[15px]"
                       data-sim-brief-resolved
                     >
-                      Critical is in focus: late-close and fallout risk are the morning priority.
-                      Needs Attention covers bottom-tier originator stall. Context & Trends flags
-                      govvie mix drift—Signals. Not Noise.
+                      Critical is in focus. Needs Attention and Context stay ranked—Signals. Not
+                      Noise.
                     </p>
+                  </div>
+                  <div
+                    class="sim-brief-actions relative mt-3 flex flex-wrap gap-2"
+                    data-sim-brief-actions
+                    aria-hidden="true"
+                  >
+                    <span
+                      class="sim-brief-chip sim-brief-chip--primary inline-flex items-center rounded-lg px-2.5 py-1.5 text-[10px] font-semibold"
+                    >
+                      View Critical list
+                    </span>
+                    <span
+                      class="sim-brief-chip inline-flex items-center rounded-lg border border-line bg-surface px-2.5 py-1.5 text-[10px] font-semibold text-ink-muted"
+                    >
+                      Ask Cohi why
+                    </span>
+                    <span
+                      class="sim-brief-chip inline-flex items-center rounded-lg border border-line bg-surface px-2.5 py-1.5 text-[10px] font-semibold text-ink-muted"
+                    >
+                      Needs Attention
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1064,7 +1116,9 @@ const severityClass: Record<string, string> = {
 
   .sim[data-scene='4'] .sim-brief,
   .sim[data-scene='5'] .sim-brief {
-    box-shadow: var(--shadow-elevated);
+    box-shadow:
+      0 2px 4px rgb(0 51 160 / 0.08),
+      0 14px 32px rgb(0 51 160 / 0.16);
     transform: translateY(-2px);
   }
 
@@ -1098,10 +1152,57 @@ const severityClass: Record<string, string> = {
     opacity: 1;
   }
 
+  .sim-brief-actions-active {
+    pointer-events: none;
+  }
+
   .sim[data-scene='6'] .sim-brief-resolved,
   .sim[data-scene='7'] .sim-brief-resolved,
   .sim[data-scene='8'] .sim-brief-resolved {
     opacity: 1;
+  }
+
+  .sim-brief-processing-bar {
+    width: 38%;
+    transform: translateX(-120%);
+  }
+
+  .sim[data-scene='1'] .sim-brief-processing-bar,
+  .sim[data-scene='2'] .sim-brief-processing-bar,
+  .sim[data-scene='3'] .sim-brief-processing-bar {
+    animation: sim-brief-processing 1.6s ease-in-out infinite;
+  }
+
+  @keyframes sim-brief-processing {
+    0% {
+      transform: translateX(-120%);
+    }
+    100% {
+      transform: translateX(320%);
+    }
+  }
+
+  .sim-brief-actions {
+    opacity: 0;
+    transform: translateY(6px);
+    pointer-events: none;
+    transition:
+      opacity 0.4s ease,
+      transform 0.4s ease;
+    transition-delay: 0.35s;
+  }
+
+  .sim-brief-chip--primary {
+    border: 1px solid color-mix(in srgb, var(--color-accent) 25%, transparent);
+    background: var(--color-accent);
+    color: white;
+  }
+
+  .sim[data-scene='6'] .sim-brief-actions,
+  .sim[data-scene='7'] .sim-brief-actions,
+  .sim[data-scene='8'] .sim-brief-actions {
+    opacity: 1;
+    transform: translateY(0);
   }
 
   .sim[data-scene='4'] .sim-pulse-dot,
@@ -1294,7 +1395,8 @@ const severityClass: Record<string, string> = {
 
   @media (prefers-reduced-motion: reduce) {
     .sim-source,
-    .sim-pulse-dot {
+    .sim-pulse-dot,
+    .sim-brief-processing-bar {
       animation: none !important;
     }
 
@@ -1309,6 +1411,7 @@ const severityClass: Record<string, string> = {
     .sim-brief-idle,
     .sim-brief-active,
     .sim-brief-resolved,
+    .sim-brief-actions,
     .sim-float-action,
     .sim-float-success,
     .sim-float-checklist,

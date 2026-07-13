@@ -49,10 +49,20 @@ import Button from './ui/Button.astro';
 
       <h1
         id="hero-heading"
-        class="mt-7 font-display text-[2.35rem] font-semibold leading-[1.12] tracking-[-0.02em] text-ink text-balance sm:mt-8 sm:text-5xl sm:leading-[1.08] lg:text-[3.65rem] lg:leading-[1.06]"
-        data-hero-item
+        class="mt-7 font-display text-[2.6rem] font-bold leading-[1.1] tracking-[-0.03em] text-balance sm:mt-8 sm:text-[3.5rem] sm:leading-[1.06] lg:text-[4.25rem] lg:leading-[1.04]"
       >
-        Signals. Not Noise.
+        <span
+          class="hero-signal inline-block text-ink opacity-0 motion-reduce:opacity-100"
+          data-hero-word
+          data-hero-signal
+        >Signals.</span>
+        <span
+          class="text-ink-muted opacity-0 motion-reduce:opacity-100"
+          data-hero-word
+          data-hero-not-noise
+        >
+          {' '}Not Noise.
+        </span>
       </h1>
 
       <p
@@ -104,3 +114,21 @@ import Button from './ui/Button.astro';
     </div>
   </Container>
 </section>
+
+<style>
+  .hero-signal.is-gradient {
+    background-image: linear-gradient(
+      105deg,
+      #001a52 0%,
+      #0033a0 38%,
+      #3366b3 68%,
+      #00a651 100%
+    );
+    background-size: 220% 100%;
+    background-position: 0% 50%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+</style>

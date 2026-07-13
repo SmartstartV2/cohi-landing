@@ -37,6 +37,42 @@ export function initSolutionSimulation() {
     panels.map((panel) => [panel.dataset.solutionPanel as PanelId, panel]),
   ) as Record<PanelId, HTMLElement>;
 
+  const noiseList = panelMap.layer?.querySelector<HTMLElement>('ul');
+  const noiseOrderOriginal = noiseList
+    ? gsap.utils.toArray<HTMLElement>('[data-scene-noise]', noiseList)
+    : [];
+
+  function restoreNoiseOrder() {
+    if (!noiseList) return;
+    noiseOrderOriginal.forEach((row) => noiseList.appendChild(row));
+    gsap.set(noiseOrderOriginal, { clearProps: 'transform' });
+  }
+
+  function sortNoiseRows(animate: boolean) {
+    if (!noiseList) return [] as HTMLElement[];
+
+    const rows = gsap.utils.toArray<HTMLElement>('[data-scene-noise]', noiseList);
+    const firstTops = new Map(rows.map((row) => [row, row.getBoundingClientRect().top]));
+
+    const sorted = [...rows].sort(
+      (a, b) => Number(a.dataset.rank) - Number(b.dataset.rank),
+    );
+    sorted.forEach((row) => noiseList.appendChild(row));
+
+    if (!animate) {
+      gsap.set(sorted, { clearProps: 'transform' });
+      return sorted;
+    }
+
+    sorted.forEach((row) => {
+      const first = firstTops.get(row) ?? row.getBoundingClientRect().top;
+      const last = row.getBoundingClientRect().top;
+      gsap.set(row, { y: first - last });
+    });
+
+    return sorted;
+  }
+
   function setLive(playing: boolean) {
     if (liveDot) liveDot.dataset.playing = playing ? 'true' : 'false';
     if (liveText) liveText.textContent = playing ? 'Live' : 'Ready';
@@ -70,11 +106,14 @@ export function initSolutionSimulation() {
     if (!panel) return;
 
     if (id === 'layer') {
+      restoreNoiseOrder();
       gsap.set(panel.querySelectorAll('[data-scene-noise]'), { opacity: 0, y: 10 });
       gsap.set(panel.querySelector('[data-scene-rank-hint]'), { opacity: 0 });
       gsap.set(panel.querySelectorAll('[data-badge-equal]'), { opacity: 1 });
       gsap.set(panel.querySelectorAll('[data-badge-ranked]'), { opacity: 0 });
       gsap.set(panel.querySelector('[data-scene-noise-note]'), { opacity: 0, y: 6 });
+      const hint = panel.querySelector('[data-scene-rank-hint]');
+      if (hint) hint.textContent = 'Ranking…';
     }
 
     if (id === 'rank') {
@@ -123,6 +162,7 @@ export function initSolutionSimulation() {
     );
 
     if (id === 'layer') {
+      sortNoiseRows(false);
       gsap.set(panel.querySelectorAll('[data-badge-equal]'), { opacity: 0 });
       gsap.set(panel.querySelectorAll('[data-badge-ranked]'), { opacity: 1 });
       const hint = panel.querySelector('[data-scene-rank-hint]');
@@ -147,14 +187,34 @@ export function initSolutionSimulation() {
 
     if (hint) hint.textContent = 'Ranking…';
 
+    // Hold ranked badges in scrambled order before FLIP sort (~0.75s beat to read).
+    const sortAt = 2.0;
+
     tl.to(hint, { opacity: 1, duration: 0.25 }, 0)
       .to(rows, { opacity: 1, y: 0, duration: 0.35, stagger: 0.08 }, 0.1)
-      .to(equals, { opacity: 0, duration: 0.25, stagger: 0.06 }, 0.7)
-      .to(ranked, { opacity: 1, duration: 0.3, stagger: 0.06 }, 0.85)
-      .call(() => {
-        if (hint) hint.textContent = 'Ranked';
-      }, undefined, 1.15)
-      .to(note, { opacity: 1, y: 0, duration: 0.35 }, 1.2);
+      .to(equals, { opacity: 0, duration: 0.25, stagger: 0.06 }, 0.75)
+      .to(ranked, { opacity: 1, duration: 0.3, stagger: 0.06 }, 0.9)
+      .add(() => {
+        sortNoiseRows(true);
+      }, sortAt)
+      .to(
+        noiseOrderOriginal,
+        {
+          y: 0,
+          duration: 0.65,
+          stagger: 0.06,
+          ease: 'power2.inOut',
+        },
+        sortAt,
+      )
+      .call(
+        () => {
+          if (hint) hint.textContent = 'Ranked';
+        },
+        undefined,
+        sortAt + 0.85,
+      )
+      .to(note, { opacity: 1, y: 0, duration: 0.35 }, sortAt + 0.9);
 
     return tl;
   }

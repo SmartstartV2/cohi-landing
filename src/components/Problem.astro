@@ -157,11 +157,18 @@ const toneClass: Record<string, string> = {
           data-problem-chrome
         >
           <div>
-            <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-subtle">
-              Without Cohi · Weekly ops pack
-            </p>
+            <div class="flex flex-wrap items-center gap-2">
+              <span
+                class="inline-flex items-center rounded-md bg-[#f8efe2] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-warning ring-1 ring-warning/20"
+              >
+                Without Cohi
+              </span>
+              <span class="text-[11px] font-medium text-ink-subtle">
+                Weekly ops pack
+              </span>
+            </div>
             <p
-              class="mt-0.5 font-display text-lg font-semibold tracking-tight text-ink"
+              class="mt-1.5 font-display text-lg font-semibold tracking-tight text-ink"
               data-problem-stage-label
             >
               {pains[0].stageLabel}
@@ -388,16 +395,17 @@ const toneClass: Record<string, string> = {
         </div>
 
         <div
-          class="relative flex items-center justify-between gap-3 border-t border-line px-5 py-3.5 sm:px-6"
+          class="relative flex flex-col items-stretch gap-3 border-t border-line px-5 py-3.5 sm:flex-row sm:items-center sm:justify-between sm:px-6"
         >
           <p class="text-[11px] tracking-[0.04em] text-ink-subtle" data-problem-footer>
             Without a ranked signal, leadership stays reactive
           </p>
           <a
             href="#solution"
-            class="shrink-0 text-xs font-semibold text-accent transition-colors hover:text-accent-hover"
+            class="problem-cta inline-flex shrink-0 items-center justify-center gap-1.5 rounded-lg bg-accent px-3.5 py-2 text-xs font-semibold text-white shadow-sm transition-[background-color,box-shadow,transform] hover:bg-accent-hover"
           >
-            See how Cohi answers this →
+            See how Cohi answers this
+            <span class="problem-cta-arrow" aria-hidden="true">→</span>
           </a>
         </div>
       </div>
@@ -441,6 +449,15 @@ const toneClass: Record<string, string> = {
     animation: problem-pulse 1.2s ease-in-out infinite;
   }
 
+  .problem-cta {
+    animation: problem-cta-float 2.4s ease-in-out infinite;
+  }
+
+  .problem-cta-arrow {
+    display: inline-block;
+    animation: problem-cta-nudge 2.4s ease-in-out infinite;
+  }
+
   @keyframes problem-pulse {
     0%,
     100% {
@@ -453,8 +470,30 @@ const toneClass: Record<string, string> = {
     }
   }
 
+  @keyframes problem-cta-float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-3px);
+    }
+  }
+
+  @keyframes problem-cta-nudge {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    50% {
+      transform: translateX(3px);
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .problem-live-dot[data-playing='true'] {
+    .problem-live-dot[data-playing='true'],
+    .problem-cta,
+    .problem-cta-arrow {
       animation: none;
     }
   }

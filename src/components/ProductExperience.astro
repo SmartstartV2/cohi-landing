@@ -2,79 +2,191 @@
 import Container from './ui/Container.astro';
 import SectionHeading from './ui/SectionHeading.astro';
 
-const primary = [
+const modules = [
   {
-    role: 'Brief',
-    title: 'Cohi Insights',
-    body: 'Daily briefings ranked Critical, Needs Attention, What’s Working, and Context—signals before coffee.',
+    name: 'Cohi Insights',
+    tag: 'Daily Brief',
+    body: 'Ranked Critical, Needs Attention, What’s Working, and Context—before coffee.',
+    icon: 'brief',
+    tone: 'accent',
   },
   {
-    role: 'Measure',
-    title: 'Fallout & Pull-Through',
-    body: 'Closings at risk, fallout forecast, and pipeline conversion visibility so leaders intervene early.',
+    name: 'Fallout & Pull-Through',
+    tag: 'Pipeline risk',
+    body: 'Late closings, fallout forecast, and conversion visibility so leaders intervene early.',
+    icon: 'fallout',
+    tone: 'warning',
   },
   {
-    role: 'Coach',
-    title: 'TopTiering®',
-    body: 'Rank and coach loan officer performance against your lending DNA—who carries the load, who needs support.',
+    name: 'TopTiering®',
+    tag: 'LO performance',
+    body: 'Rank and coach originators against your lender DNA—who carries the load, who needs support.',
+    icon: 'tier',
+    tone: 'success',
   },
-];
+  {
+    name: 'HMDA DataBank',
+    tag: 'Market view',
+    body: 'Peer and geography intelligence—competitive position beyond your own four walls.',
+    icon: 'market',
+    tone: 'navy',
+  },
+] as const;
 
-const secondary = [
-  {
-    title: 'Ask Cohi',
-    body: 'Natural-language questions with evidence from your production context and org knowledge.',
-  },
-  {
-    title: 'HMDA DataBank',
-    body: 'Market and peer intelligence—lender search, geography, fallout, and competitive position.',
-  },
-];
+const toneClass: Record<(typeof modules)[number]['tone'], string> = {
+  accent: 'text-accent',
+  warning: 'text-warning',
+  success: 'text-success',
+  navy: 'text-navy',
+};
 ---
 
 <section id="platform" class="scroll-mt-20 bg-surface py-20 sm:py-24">
   <Container>
     <SectionHeading
-      title="One platform. Every leadership lens."
-      description="From Cohi Insights out—daily briefs, fallout intelligence, TopTiering®, and the market views mortgage leaders actually use."
+      eyebrow="Platform"
+      title="Five surfaces. One lender DNA."
+      description="The Coheus stack mortgage leaders actually use—daily brief, fallout intelligence, TopTiering®, market view, and Ask Cohi."
     />
 
-    <ul class="mt-12 grid list-none gap-10 p-0 m-0 lg:grid-cols-3 lg:gap-8 xl:gap-10">
-      {
-        primary.map((item) => (
-          <li class="relative" data-reveal>
-            <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-accent">
-              {item.role}
-            </p>
-            <h3 class="mt-3 font-display text-xl font-semibold tracking-tight text-ink sm:text-[1.35rem]">
-              {item.title}
-            </h3>
-            <p class="mt-2 text-sm leading-relaxed text-ink-muted sm:text-[15px]">{item.body}</p>
-          </li>
-        ))
-      }
-    </ul>
-
     <div
-      class="mt-12 grid gap-8 border-t border-line pt-10 sm:grid-cols-2 sm:gap-10"
+      class="relative mt-12 overflow-hidden rounded-2xl border border-line bg-[linear-gradient(180deg,#fbfcfd_0%,#ffffff_48%)] shadow-card lg:mt-14"
       data-reveal
     >
-      {
-        secondary.map((item) => (
-          <div>
-            <h3 class="text-base font-semibold tracking-tight text-ink">{item.title}</h3>
-            <p class="mt-1.5 text-sm leading-relaxed text-ink-muted">{item.body}</p>
-          </div>
-        ))
-      }
+      <div
+        class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_0%,rgba(0,51,160,0.045),transparent_55%)]"
+        aria-hidden="true"
+      >
+      </div>
+
+      <div
+        class="relative flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-3.5 sm:px-6"
+      >
+        <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-subtle">
+          Coheus stack
+        </p>
+        <p class="text-[11px] font-medium text-ink-muted">
+          Production + market context · not another BI dashboard
+        </p>
+      </div>
+
+      <ul class="relative m-0 list-none divide-y divide-line p-0">
+        {
+          modules.map((item, index) => (
+            <li
+              class="grid gap-3 px-5 py-5 sm:grid-cols-[4.5rem_minmax(0,16rem)_1fr] sm:items-center sm:gap-6 sm:px-6 sm:py-5"
+              data-reveal
+            >
+              <span
+                class="font-display text-sm font-semibold tabular-nums tracking-tight text-ink-subtle/70"
+                aria-hidden="true"
+              >
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <div class="flex min-w-0 items-start gap-3">
+                <span
+                  class:list={[
+                    'mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center',
+                    toneClass[item.tone],
+                  ]}
+                  aria-hidden="true"
+                >
+                  {item.icon === 'brief' && (
+                    <svg class="h-5 w-5" viewBox="0 0 16 16" fill="none">
+                      <path
+                        d="M8 2.5 V4 M8 12 V13.5 M3 8 H4.5 M11.5 8 H13 M4.4 4.4 L5.4 5.4 M10.6 10.6 L11.6 11.6 M11.6 4.4 L10.6 5.4 M5.4 10.6 L4.4 11.6"
+                        stroke="currentColor"
+                        stroke-width="1.4"
+                        stroke-linecap="round"
+                      />
+                      <circle cx="8" cy="8" r="2.1" stroke="currentColor" stroke-width="1.4" />
+                    </svg>
+                  )}
+                  {item.icon === 'fallout' && (
+                    <svg class="h-5 w-5" viewBox="0 0 16 16" fill="none">
+                      <path
+                        d="M3 11.5 L6.2 7.8 L8.4 9.6 L13 4.5"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M10.2 4.5 H13 V7.2"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  )}
+                  {item.icon === 'tier' && (
+                    <svg class="h-5 w-5" viewBox="0 0 16 16" fill="none">
+                      <path
+                        d="M3.5 11.5 H6 V6.5 H3.5 V11.5 Z M6.8 11.5 H9.3 V4.5 H6.8 V11.5 Z M10.1 11.5 H12.6 V8 H10.1 V11.5 Z"
+                        stroke="currentColor"
+                        stroke-width="1.3"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  )}
+                  {item.icon === 'market' && (
+                    <svg class="h-5 w-5" viewBox="0 0 16 16" fill="none">
+                      <circle cx="8" cy="8" r="5.2" stroke="currentColor" stroke-width="1.4" />
+                      <path
+                        d="M3 8 H13 M8 3 C9.8 4.8 9.8 11.2 8 13 C6.2 11.2 6.2 4.8 8 3 Z"
+                        stroke="currentColor"
+                        stroke-width="1.4"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  )}
+                </span>
+                <div class="min-w-0">
+                  <h3 class="font-display text-base font-semibold tracking-tight text-ink sm:text-[1.05rem]">
+                    {item.name}
+                  </h3>
+                  <p class="mt-0.5 text-[11px] font-medium tracking-wide text-accent">
+                    {item.tag}
+                  </p>
+                </div>
+              </div>
+              <p class="text-sm leading-relaxed text-ink-muted sm:text-[15px]">
+                {item.body}
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div
+        class="relative flex flex-col gap-3 border-t border-line bg-canvas/40 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6"
+      >
+        <div class="min-w-0">
+          <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-accent">
+            Ask Cohi
+          </p>
+          <p class="mt-1 text-sm text-ink-muted">
+            Natural-language follow-ups on the same ranked signals.
+          </p>
+        </div>
+        <a
+          href="#ai-intelligence"
+          class="shrink-0 text-xs font-semibold text-accent transition-colors hover:text-accent-hover"
+        >
+          See Ask Cohi in action →
+        </a>
+      </div>
     </div>
 
     <p
-      class="mt-10 max-w-2xl border-l-2 border-accent/35 pl-4 text-sm leading-relaxed text-ink-muted sm:mt-12 sm:text-base"
+      class="mt-8 max-w-2xl text-sm leading-relaxed text-ink-muted sm:mt-10 sm:text-[15px]"
       data-reveal
     >
       <span class="font-semibold text-ink">Integrations.</span>
-      Works with the production and market data lenders already run—without silent warehouse sync into model training.
+      {' '}
+      Works with the production and market data lenders already run—without silent warehouse sync
+      into model training.
     </p>
   </Container>
 </section>

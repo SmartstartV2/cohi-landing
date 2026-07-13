@@ -2,7 +2,7 @@
 interface Props {
   href?: string;
   variant?: 'primary' | 'secondary' | 'ghost';
-  size?: 'md' | 'sm';
+  size?: 'md' | 'sm' | 'lg';
   class?: string;
   type?: 'button' | 'submit';
 }
@@ -16,19 +16,20 @@ const {
 } = Astro.props;
 
 const base =
-  'inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-[color,background-color,border-color,box-shadow,transform] duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:translate-y-px';
+  'inline-flex items-center justify-center gap-2 rounded-xl font-semibold tracking-tight transition-[color,background-color,border-color,box-shadow,transform] duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:translate-y-px';
 
 const variants = {
   primary:
-    'bg-accent text-white hover:bg-accent-hover shadow-sm hover:shadow-[0_4px_14px_rgb(15_95_107_/_0.28)]',
+    'bg-accent text-white hover:bg-accent-hover shadow-[0_1px_2px_rgb(0_51_160_/_0.12),0_8px_24px_rgb(0_51_160_/_0.22)] hover:shadow-[0_2px_4px_rgb(0_51_160_/_0.14),0_12px_28px_rgb(0_51_160_/_0.28)] hover:-translate-y-0.5',
   secondary:
-    'bg-surface text-ink border border-line-strong hover:border-accent/35 hover:bg-canvas hover:text-accent',
+    'bg-surface/90 text-ink border border-line-strong/80 backdrop-blur-sm hover:border-accent/40 hover:bg-surface hover:text-accent shadow-sm hover:shadow-card hover:-translate-y-0.5',
   ghost: 'bg-transparent text-ink-muted hover:text-ink hover:bg-ink/5',
 };
 
 const sizes = {
   md: 'px-5 py-2.5 text-sm',
   sm: 'px-3.5 py-2 text-sm',
+  lg: 'px-7 py-3.5 text-[15px]',
 };
 
 const classes = [base, variants[variant], sizes[size], className];

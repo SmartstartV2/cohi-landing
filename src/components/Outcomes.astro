@@ -2,18 +2,27 @@
 import Container from './ui/Container.astro';
 import SectionHeading from './ui/SectionHeading.astro';
 
-const steps = [
+const roles = [
   {
-    title: 'See what moved',
-    body: 'Surface overnight shifts across pull-through, fallout, late closings, and LO tiers—ranked Critical to Context, not buried in dashboards.',
+    seat: 'Executive',
+    focus: 'Morning priority',
+    body: 'Open the Daily Brief for the Critical call—fallout, late closings, and what can wait until after coffee.',
+    uses: 'Cohi Insights',
+    detail: 'Critical first',
   },
   {
-    title: 'Know why it moved',
-    body: 'Tie each signal to the drivers behind it—cycle time, borrower conditions, concentration risk—before the first leadership call.',
+    seat: 'Operations',
+    focus: 'Where to intervene',
+    body: 'Trace drivers behind pull-through slippage—cycle time, conditions, branch pressure—before the ops huddle.',
+    uses: 'Fallout & Pull-Through',
+    detail: 'Drivers in view',
   },
   {
-    title: 'Lock the priority',
-    body: 'Align on the few areas with the most leverage on fallout, production, and margin—so the team leads one move, not ten debates.',
+    seat: 'Production',
+    focus: 'Who carries the load',
+    body: 'See which originators are Top Tier versus stalling, so coaching and capacity follow the signal—not last month’s report.',
+    uses: 'TopTiering®',
+    detail: 'Coach from rank',
   },
 ];
 ---
@@ -21,50 +30,80 @@ const steps = [
 <section id="outcomes" class="scroll-mt-20 bg-surface py-20 sm:py-24">
   <Container>
     <SectionHeading
-      title="Signals. Not Noise."
-      description="Cohi converts your lender DNA and production data into a shared morning loop: detect the shift, understand the driver, and lock the priority leadership should decide on."
+      eyebrow="Leadership"
+      title="One brief. Every leadership seat."
+      description="Executives, ops, and production leaders work from the same ranked morning signal—each with a clear job when the brief lands."
     />
 
-    <div class="outcomes-loop relative mt-12 lg:mt-14" data-outcomes-loop>
+    <div
+      class="outcomes-roles relative mt-12 overflow-hidden rounded-2xl border border-line bg-[linear-gradient(180deg,#fbfcfd_0%,#ffffff_42%)] shadow-card lg:mt-14"
+      data-outcomes-loop
+    >
       <div
-        class="pointer-events-none absolute left-[11px] top-3 bottom-3 w-px bg-line lg:left-[0.75rem] lg:right-[calc(33.333%-0.75rem)] lg:top-[0.75rem] lg:bottom-auto lg:h-px lg:w-auto"
-        aria-hidden="true"
-      >
-      </div>
-      <div
-        class="pointer-events-none absolute left-[11px] top-3 bottom-3 w-px origin-top scale-y-0 bg-accent lg:left-[0.75rem] lg:right-[calc(33.333%-0.75rem)] lg:top-[0.75rem] lg:bottom-auto lg:h-px lg:w-auto lg:origin-left lg:scale-x-0 lg:scale-y-100"
-        data-outcomes-progress
+        class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_0%,rgba(0,51,160,0.05),transparent_55%)]"
         aria-hidden="true"
       >
       </div>
 
-      <ol class="relative m-0 grid list-none gap-10 p-0 lg:grid-cols-3 lg:gap-8 xl:gap-10">
+      <div
+        class="relative flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-3.5 sm:px-6"
+      >
+        <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-subtle">
+          Shared Daily Brief
+        </p>
+        <p class="text-[11px] font-medium text-accent">
+          Same lender DNA · ranked urgency
+        </p>
+      </div>
+
+      <ul
+        class="relative m-0 grid list-none divide-y divide-line p-0 lg:grid-cols-3 lg:divide-x lg:divide-y-0"
+      >
         {
-          steps.map((item, i) => (
-            <li class="relative flex gap-4 lg:flex-col lg:gap-0" data-outcomes-step>
-              <span
-                class="relative z-10 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-accent/25 bg-surface text-[11px] font-semibold tracking-wide text-accent lg:mb-5"
-              >
-                {String(i + 1).padStart(2, '0')}
-              </span>
-              <div class="min-w-0 pt-0.5 lg:pt-0">
-                <h3 class="font-display text-xl font-semibold tracking-tight text-ink sm:text-[1.35rem]">
-                  {item.title}
-                </h3>
-                <p class="mt-2 text-sm leading-relaxed text-ink-muted sm:text-[15px]">{item.body}</p>
+          roles.map((role, index) => (
+            <li
+              class="relative flex flex-col px-5 py-7 sm:px-6 sm:py-8"
+              data-outcomes-step
+            >
+              <div class="flex items-center justify-between gap-3">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-accent">
+                  {role.seat}
+                </p>
+                <span
+                  class="font-display text-sm font-semibold tabular-nums tracking-tight text-ink-subtle/70"
+                  aria-hidden="true"
+                >
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+              </div>
+
+              <h3 class="mt-5 font-display text-xl font-semibold tracking-tight text-ink sm:text-[1.4rem]">
+                {role.focus}
+              </h3>
+              <p class="mt-2.5 flex-1 text-sm leading-relaxed text-ink-muted sm:text-[15px]">
+                {role.body}
+              </p>
+
+              <div class="mt-6 flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-line/80 pt-4">
+                <span class="text-[11px] font-semibold text-ink">{role.uses}</span>
+                <span class="text-[10px] text-line-strong" aria-hidden="true">
+                  ·
+                </span>
+                <span class="text-[11px] text-ink-subtle">{role.detail}</span>
               </div>
             </li>
           ))
         }
-      </ol>
+      </ul>
     </div>
 
     <p
-      class="mt-10 max-w-2xl border-l-2 border-accent/35 pl-4 text-sm leading-relaxed text-ink-muted sm:mt-12 sm:text-base"
+      class="mt-8 max-w-2xl text-sm leading-relaxed text-ink-muted sm:mt-10 sm:text-[15px]"
       data-reveal
     >
-      <span class="font-semibold text-ink">Act from one brief.</span>
-      Executives, managers, and operators share the same ranked signals—so debate ends and decisions start.
+      <span class="font-semibold text-ink">Same lender DNA. Shared urgency.</span>
+      {' '}
+      Debate ends when every seat starts from Critical—not a private dashboard.
     </p>
   </Container>
 </section>
